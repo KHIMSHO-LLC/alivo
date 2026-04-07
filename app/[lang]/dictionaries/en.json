@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "home": "Home",
+    "categories": "Products",
+    "recuperators": "Recuperators",
+    "ventilators": "Ventilators",
+    "contact": "Contact Us",
+    "about": "About"
+  },
+  "hero": {
+    "badge": "Official distributor in Georgia",
+    "headline1": "The Powerful",
+    "headline2": "Future of Clean",
+    "headline3": "Air",
+    "subtext": "Fantini Cosmi air purification and ventilation systems — engineered in Italy, available in Georgia.",
+    "cta": "Explore Products",
+    "ctaSecondary": "Learn More"
+  },
+  "categories": {
+    "sectionTitle": "Explore Our Products",
+    "sectionSubtitle": "Two categories of premium air systems for every home",
+    "recuperators": {
+      "title": "Recuperators",
+      "description": "Heat-recovery ventilation. Fresh air in, energy stays in."
+    },
+    "ventilators": {
+      "title": "Ventilators",
+      "description": "Silent, smart, demand-controlled air exchange."
+    },
+    "viewAll": "View All",
+    "learnMore": "Learn More"
+  },
+  "about": {
+    "sectionBadge": "About Alivo",
+    "headline": "Design meets power and sustainability",
+    "body": "Alivo is Georgia's trusted partner for premium indoor air quality solutions. We bring Fantini Cosmi's Italian engineering expertise to homes and businesses across Georgia — combining cutting-edge technology with a commitment to healthier living.",
+    "mission": {
+      "label": "Mission",
+      "text": "To make clean, fresh air accessible to every home in Georgia through world-class ventilation technology."
+    },
+    "vision": {
+      "label": "Vision",
+      "text": "A Georgia where every family breathes air as pure as the mountains — indoors, every day."
+    },
+    "values": {
+      "label": "Values",
+      "items": ["Quality without compromise", "Honest expertise", "Long-term thinking", "Customer first"]
+    },
+    "stat1": { "value": "500+", "label": "Installations" },
+    "stat2": { "value": "5★", "label": "Average rating" },
+    "stat3": { "value": "3yr", "label": "Warranty" }
+  },
+  "reviews": {
+    "sectionTitle": "What Our Customers Say",
+    "sectionSubtitle": "Real results from real homes across Georgia"
+  },
+  "blogs": {
+    "sectionTitle": "From the Blog",
+    "sectionSubtitle": "Insights on air quality, ventilation and healthy living",
+    "readMore": "Read Article",
+    "viewAll": "View All Articles"
+  },
+  "footer": {
+    "tagline": "Premium air purification for Georgian homes.",
+    "products": "Products",
+    "company": "Company",
+    "contact": "Get in Touch",
+    "about": "About Alivo",
+    "blog": "Blog",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "rights": "All rights reserved",
+    "addressLabel": "Tbilisi, Georgia",
+    "formTitle": "Ready to get started?",
+    "formSubtitle": "Our team will help you choose the right system for your home."
+  },
+  "modal": {
+    "title": "Get in Touch",
+    "subtitle": "Tell us about your project and we'll get back to you within 24 hours.",
+    "name": "Full Name",
+    "namePlaceholder": "Your full name",
+    "phone": "Phone Number",
+    "phonePlaceholder": "+995 5XX XXX XXX",
+    "email": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Send Message",
+    "submitting": "Sending...",
+    "success": "Thank you! We'll be in touch within 24 hours.",
+    "close": "Close"
+  },
+  "category": {
+    "bestsellers": "Bestsellers",
+    "allProducts": "All Products",
+    "learnMore": "Learn More",
+    "getQuote": "Get a Quote",
+    "howItWorks": "How It Works",
+    "aboutBrand": "About Fantini Cosmi"
+  },
+  "product": {
+    "keyBenefits": "Key Benefits",
+    "allFeatures": "Technical Specifications",
+    "aboutBrand": "About Fantini Cosmi",
+    "similar": "You May Also Like",
+    "getQuote": "Request a Quote",
+    "downloadSpec": "Download Spec Sheet",
+    "bestseller": "Bestseller"
+  },
+  "fantini": {
+    "badge": "The Brand Behind the Technology",
+    "headline": "Italian Engineering Since 1951",
+    "body": "Fantini Cosmi was founded in Milan over 70 years ago and has grown into one of Europe's leading manufacturers of ventilation and climate control systems. Every product combines precision Italian engineering with rigorous quality standards — built to last, built to perform.",
+    "stat1": { "value": "70+", "label": "Years of expertise" },
+    "stat2": { "value": "50+", "label": "Countries" },
+    "stat3": { "value": "1M+", "label": "Units installed" },
+    "learnMore": "Learn More"
+  }
+}
