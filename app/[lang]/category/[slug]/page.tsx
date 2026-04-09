@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { hasLocale, getDictionary } from '../../dictionaries'
-import { getCategoryBySlug, getProductsByCategory, getBestsellers } from '@/lib/data/products'
+import { getCategoryBySlug, getProductsByCategory, getBestsellers } from '@/lib/data/supabase-products'
 import { CategoryHero } from '@/components/category/CategoryHero'
 import { ProductGrid } from '@/components/category/ProductGrid'
 import { ExplainerSection } from '@/components/category/ExplainerSection'
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { lang, slug } = await params
-  const category = getCategoryBySlug(slug)
+  const category = await getCategoryBySlug(slug)
   if (!category) return {}
   return {
     title: `${category.name[lang as Locale]} — Alivo`,
@@ -36,12 +36,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   if (!hasLocale(lang)) notFound()
 
-  const category = getCategoryBySlug(slug)
+  const category = await getCategoryBySlug(slug)
   if (!category) notFound()
 
   const dict = await getDictionary(lang as Locale)
-  const allProducts = getProductsByCategory(slug)
-  const bestsellers = getBestsellers(slug)
+  const allProducts = await getProductsByCategory(slug)
+  const bestsellers = await getBestsellers(slug)
 
   return (
     <>

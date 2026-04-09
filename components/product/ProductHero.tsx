@@ -18,7 +18,7 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: image slider */}
           <ImageSlider
-            slides={product.imageCount}
+            images={product.images}
             placeholderColor={product.placeholderColor}
             productName={product.name[lang]}
           />

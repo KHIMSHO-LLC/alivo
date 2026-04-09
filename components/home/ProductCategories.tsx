@@ -1,8 +1,9 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage'
 import type { Locale } from '@/lib/types'
-import { CATEGORIES } from '@/lib/data/products'
+import { getCategories } from '@/lib/data/supabase-products'
 
 interface ProductCategoriesProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,7 +11,8 @@ interface ProductCategoriesProps {
   lang: Locale
 }
 
-export function ProductCategories({ dict, lang }: ProductCategoriesProps) {
+export async function ProductCategories({ dict, lang }: ProductCategoriesProps) {
+  const categories = await getCategories()
   const c = dict.categories
 
   return (
@@ -24,19 +26,31 @@ export function ProductCategories({ dict, lang }: ProductCategoriesProps) {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.slug}
               href={`/${lang}/category/${cat.slug}`}
               className="group relative overflow-hidden rounded-3xl bg-[#0C1A23] hover:scale-[1.01] transition-transform duration-300"
             >
               {/* Image area */}
-              <PlaceholderImage
-                color={cat.placeholderColor}
-                aspectRatio="16/9"
-                className="rounded-none"
-                pattern="dots"
-              />
+              {cat.images[0] ? (
+                <div className="relative w-full aspect-video">
+                  <Image
+                    src={cat.images[0]}
+                    alt={cat.name[lang]}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              ) : (
+                <PlaceholderImage
+                  color={cat.placeholderColor}
+                  aspectRatio="16/9"
+                  className="rounded-none"
+                  pattern="dots"
+                />
+              )}
 
               {/* Content overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0C1A23] via-[#0C1A23]/60 to-transparent flex flex-col justify-end p-8">

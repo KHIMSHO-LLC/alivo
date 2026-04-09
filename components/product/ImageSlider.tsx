@@ -1,17 +1,19 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import Image from 'next/image'
 
 interface ImageSliderProps {
-  slides: number
+  images: string[]
   placeholderColor: string
   productName: string
 }
 
 const ACCENT_COLORS = ['#263947', '#0C1A23', '#1a2d3d', '#1e3448']
 
-export function ImageSlider({ slides, placeholderColor, productName }: ImageSliderProps) {
+export function ImageSlider({ images, placeholderColor, productName }: ImageSliderProps) {
   const [active, setActive] = useState(0)
+  const slides = images.length || 1
 
   const prev = useCallback(() => setActive((i) => (i - 1 + slides) % slides), [slides])
   const next = useCallback(() => setActive((i) => (i + 1) % slides), [slides])
@@ -20,26 +22,38 @@ export function ImageSlider({ slides, placeholderColor, productName }: ImageSlid
     <div className="flex flex-col gap-4">
       {/* Main slide */}
       <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}>
-        {/* Dot pattern */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #E4E969 1px, transparent 1px)',
-            backgroundSize: '22px 22px',
-          }}
-        />
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/40" />
+        {images.length > 0 && images[active] ? (
+          <Image
+            src={images[active]}
+            alt={`${productName} - image ${active + 1}`}
+            fill
+            className="object-cover"
+            priority={active === 0}
+          />
+        ) : (
+          <>
+            {/* Dot pattern */}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: 'radial-gradient(circle, #E4E969 1px, transparent 1px)',
+                backgroundSize: '22px 22px',
+              }}
+            />
+            {/* Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/40" />
 
-        {/* Centered label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <div className="w-24 h-24 rounded-full border-2 border-[#E4E969]/30 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full border-2 border-[#E4E969]/50 flex items-center justify-center">
-              <div className="w-6 h-6 rounded-full bg-[#E4E969]/20 border border-[#E4E969]" />
+            {/* Centered label */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <div className="w-24 h-24 rounded-full border-2 border-[#E4E969]/30 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full border-2 border-[#E4E969]/50 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-[#E4E969]/20 border border-[#E4E969]" />
+                </div>
+              </div>
+              <p className="text-white/30 text-xs tracking-widest uppercase">{productName}</p>
             </div>
-          </div>
-          <p className="text-white/30 text-xs tracking-widest uppercase">{productName}</p>
-        </div>
+          </>
+        )}
 
         {/* Slide counter */}
         <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm text-white/70 text-xs px-2.5 py-1 rounded-full">
@@ -74,13 +88,21 @@ export function ImageSlider({ slides, placeholderColor, productName }: ImageSlid
       {/* Thumbnail dots / thumbnails */}
       {slides > 1 && (
         <div className="flex gap-2">
-          {Array.from({ length: slides }).map((_, i) => (
+          {images.map((img, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
               className="relative rounded-lg overflow-hidden flex-1 transition-all duration-200"
               style={{ aspectRatio: '4/3', backgroundColor: ACCENT_COLORS[i % ACCENT_COLORS.length] }}
             >
+              {img ? (
+                <Image
+                  src={img}
+                  alt={`${productName} thumbnail ${i + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              ) : null}
               <div
                 className={`absolute inset-0 transition-opacity ${i === active ? 'opacity-0' : 'opacity-60 bg-black'}`}
               />

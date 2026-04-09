@@ -13,7 +13,7 @@ export interface Product {
   description: BilingualText
   isBestseller: boolean
   placeholderColor: string
-  imageCount: number
+  images: string[]
   benefits: ProductBenefit[]
   features: ProductFeature[]
 }
@@ -35,6 +35,7 @@ export interface Category {
   description: BilingualText
   heroTagline: BilingualText
   placeholderColor: string
+  images: string[]
   explainerTitle: BilingualText
   explainerBody: BilingualText
   howItWorks: HowItWorksStep[]

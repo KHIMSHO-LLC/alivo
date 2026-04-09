@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { PlaceholderImage } from './PlaceholderImage'
 import type { Locale, Product } from '@/lib/types'
@@ -17,11 +18,23 @@ export function ProductCard({ product, lang, bestsellersLabel = 'Bestseller', le
     >
       {/* Image */}
       <div className="relative">
-        <PlaceholderImage
-          color={product.placeholderColor}
-          aspectRatio="4/3"
-          className="rounded-none"
-        />
+        {product.images[0] ? (
+          <div className="relative w-full aspect-[4/3]">
+            <Image
+              src={product.images[0]}
+              alt={product.name[lang]}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          </div>
+        ) : (
+          <PlaceholderImage
+            color={product.placeholderColor}
+            aspectRatio="4/3"
+            className="rounded-none"
+          />
+        )}
         {product.isBestseller && (
           <span className="absolute top-3 left-3 bg-[#E4E969] text-[#0C1A23] text-xs font-bold px-3 py-1 rounded-full tracking-wide">
             {bestsellersLabel}
