@@ -13,6 +13,7 @@ export const CATEGORIES: Category[] = [
       ka: 'ისუნთქე სუფთად. დაზოგე ენერგია.',
     },
     placeholderColor: '#263947',
+    images: [],
     explainerTitle: {
       en: 'What is a Recuperator?',
       ka: 'რა არის რეკუპერატორი?',
@@ -68,6 +69,7 @@ export const CATEGORIES: Category[] = [
       ka: 'ჩუმი სიმძლავრე. სუფთა ჰაერი.',
     },
     placeholderColor: '#0C1A23',
+    images: [],
     explainerTitle: {
       en: 'What is a Ventilator?',
       ka: 'რა არის ვენტილატორი?',
@@ -121,7 +123,7 @@ export const PRODUCTS: Product[] = [
     },
     isBestseller: true,
     placeholderColor: '#263947',
-    imageCount: 3,
+    images: [],
     benefits: [
       {
         icon: '🌬️',
@@ -181,7 +183,7 @@ export const PRODUCTS: Product[] = [
     },
     isBestseller: true,
     placeholderColor: '#0C1A23',
-    imageCount: 4,
+    images: [],
     benefits: [
       {
         icon: '💧',
@@ -241,7 +243,7 @@ export const PRODUCTS: Product[] = [
     },
     isBestseller: false,
     placeholderColor: '#DAEFFF',
-    imageCount: 2,
+    images: [],
     benefits: [
       {
         icon: '🔧',
@@ -292,7 +294,7 @@ export const PRODUCTS: Product[] = [
     },
     isBestseller: true,
     placeholderColor: '#263947',
-    imageCount: 3,
+    images: [],
     benefits: [
       {
         icon: '💧',
@@ -342,7 +344,7 @@ export const PRODUCTS: Product[] = [
     },
     isBestseller: true,
     placeholderColor: '#0C1A23',
-    imageCount: 3,
+    images: [],
     benefits: [
       {
         icon: '🔇',
