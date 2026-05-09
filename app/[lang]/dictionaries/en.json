@@ -4,17 +4,14 @@
     "categories": "Products",
     "recuperators": "Recuperators",
     "ventilators": "Ventilators",
-    "contact": "Contact Us",
+    "contact": "Contact",
     "about": "About"
   },
   "hero": {
     "badge": "Official distributor in Georgia",
-    "headline1": "The Powerful",
-    "headline2": "Future of Clean",
-    "headline3": "Air",
-    "subtext": "Fantini Cosmi air purification and ventilation systems — engineered in Italy, available in Georgia.",
-    "cta": "Explore Products",
-    "ctaSecondary": "Learn More"
+    "headline": "The Powerful Future of Clean Air",
+    "subtext": "Fantini Cosmi recuperators and ventilators — engineered in Italy, delivered and installed across Georgia.",
+    "cta": "Get a Free Consultation"
   },
   "categories": {
     "sectionTitle": "Explore Our Products",
@@ -33,22 +30,24 @@
   "about": {
     "sectionBadge": "About Alivo",
     "headline": "Design meets power and sustainability",
-    "body": "Alivo is Georgia's trusted partner for premium indoor air quality solutions. We bring Fantini Cosmi's Italian engineering expertise to homes and businesses across Georgia — combining cutting-edge technology with a commitment to healthier living.",
-    "mission": {
-      "label": "Mission",
-      "text": "To make clean, fresh air accessible to every home in Georgia through world-class ventilation technology."
-    },
-    "vision": {
-      "label": "Vision",
-      "text": "A Georgia where every family breathes air as pure as the mountains — indoors, every day."
-    },
-    "values": {
-      "label": "Values",
-      "items": ["Quality without compromise", "Honest expertise", "Long-term thinking", "Customer first"]
-    },
-    "stat1": { "value": "500+", "label": "Installations" },
-    "stat2": { "value": "5★", "label": "Average rating" },
-    "stat3": { "value": "3yr", "label": "Warranty" }
+    "body": "Alivo is Georgia's trusted partner for premium indoor air quality. We bring Fantini Cosmi's Italian engineering to homes and businesses across the country — pairing world-class technology with honest local expertise.",
+    "features": [
+      {
+        "title": "The Power of Heat",
+        "description": "High-efficiency heat-recovery cores keep warmth inside while bringing fresh air in — comfort without the energy bill.",
+        "image": "https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+      },
+      {
+        "title": "Designed for Comfort",
+        "description": "Whisper-quiet operation, intuitive controls, and a clean, modern look that disappears into your home.",
+        "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+      },
+      {
+        "title": "Sustainable Wind",
+        "description": "Demand-controlled ventilation that uses only the energy it needs — better for your home, better for the planet.",
+        "image": "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+      }
+    ]
   },
   "reviews": {
     "sectionTitle": "What Our Customers Say",
@@ -71,8 +70,7 @@
     "terms": "Terms of Use",
     "rights": "All rights reserved",
     "addressLabel": "Tbilisi, Georgia",
-    "formTitle": "Ready to get started?",
-    "formSubtitle": "Our team will help you choose the right system for your home."
+    "follow": "Follow us"
   },
   "modal": {
     "title": "Get in Touch",
@@ -87,6 +85,16 @@
     "submitting": "Sending...",
     "success": "Thank you! We'll be in touch within 24 hours.",
     "close": "Close"
+  },
+  "contactPage": {
+    "badge": "Contact",
+    "title": "Let's talk about your home",
+    "subtitle": "Our team will help you choose the right system, prepare a quote and arrange installation. Send us a message or reach out directly.",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Working hours",
+    "hoursValue": "Mon — Sat · 10:00 — 19:00"
   },
   "category": {
     "bestsellers": "Bestsellers",

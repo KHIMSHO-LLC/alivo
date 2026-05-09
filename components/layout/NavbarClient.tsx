@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useModal } from '@/components/providers/ModalProvider'
 import type { Locale } from '@/lib/types'
 
 interface NavbarClientProps {
@@ -13,16 +12,32 @@ interface NavbarClientProps {
   dict: Record<string, any>
 }
 
+const LANG_OPTIONS: { code: Locale; label: string }[] = [
+  { code: 'en', label: 'EN' },
+  { code: 'ka', label: 'GE' },
+]
+
 export function NavbarClient({ lang, dict }: NavbarClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { openModal } = useModal()
+  const langRef = useRef<HTMLDivElement>(null)
   const nav = dict.nav
 
-  function switchLang() {
-    const newLang = lang === 'en' ? 'ka' : 'en'
-    // Replace locale segment in pathname: /en/... → /ka/...
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false)
+      }
+    }
+    if (langOpen) document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [langOpen])
+
+  function selectLang(newLang: Locale) {
+    setLangOpen(false)
+    if (newLang === lang) return
     const newPath = pathname.replace(/^\/(en|ka)/, `/${newLang}`)
     router.push(newPath)
   }
@@ -31,11 +46,13 @@ export function NavbarClient({ lang, dict }: NavbarClientProps) {
     { label: nav.home, href: `/${lang}` },
     { label: nav.recuperators, href: `/${lang}/category/recuperators` },
     { label: nav.ventilators, href: `/${lang}/category/ventilators` },
+    { label: nav.contact, href: `/${lang}/contact` },
   ]
+
+  const currentLang = LANG_OPTIONS.find((l) => l.code === lang)?.label ?? 'EN'
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
-      {/* Backdrop blur bar */}
       <div className="absolute inset-0 bg-[#0C1A23]/90 backdrop-blur-md border-b border-[#263947]/60" />
 
       <div className="relative max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -57,7 +74,7 @@ export function NavbarClient({ lang, dict }: NavbarClientProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-[#DAEFFF]/70 hover:text-[#DAEFFF] text-sm font-medium transition-colors"
+              className="text-[#DAEFFF]/75 hover:text-[#DAEFFF] text-sm font-medium transition-colors"
             >
               {link.label}
             </Link>
@@ -66,24 +83,50 @@ export function NavbarClient({ lang, dict }: NavbarClientProps) {
 
         {/* Right actions */}
         <div className="flex items-center gap-3">
-          {/* Lang switcher */}
-          <button
-            onClick={switchLang}
-            className="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[#DAEFFF]/50 hover:text-[#E4E969] transition-colors px-2 py-1 rounded border border-[#263947] hover:border-[#E4E969]/40"
-          >
-            {lang === 'en' ? 'GEO' : 'ENG'}
-          </button>
+          {/* Language dropdown */}
+          <div ref={langRef} className="relative hidden md:block">
+            <button
+              onClick={() => setLangOpen((o) => !o)}
+              aria-haspopup="listbox"
+              aria-expanded={langOpen}
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#DAEFFF]/80 hover:text-[#DAEFFF] transition-colors px-3 py-1.5 rounded-full border border-[#DAEFFF]/30 hover:border-[#DAEFFF]/60"
+            >
+              {currentLang}
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                className={`transition-transform ${langOpen ? 'rotate-180' : ''}`}
+              >
+                <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
 
-          {/* CTA */}
-          <button
-            onClick={() => {
-              // Trigger modal via a custom event since we're in a client navbar
-              openModal()
-            }}
-            className="hidden md:flex bg-[#E4E969] hover:bg-[#FAFFC5] text-[#0C1A23] text-xs font-bold px-5 py-2.5 rounded-full transition-colors tracking-wide"
-          >
-            {nav.contact}
-          </button>
+            {langOpen && (
+              <ul
+                role="listbox"
+                className="absolute right-0 mt-2 w-28 bg-[#0C1A23] border border-[#263947] rounded-lg shadow-lg overflow-hidden"
+              >
+                {LANG_OPTIONS.map((opt) => (
+                  <li key={opt.code}>
+                    <button
+                      role="option"
+                      aria-selected={opt.code === lang}
+                      onClick={() => selectLang(opt.code)}
+                      className={`w-full text-left px-4 py-2.5 text-xs font-semibold tracking-wide transition-colors ${
+                        opt.code === lang
+                          ? 'bg-[#DAEFFF]/10 text-[#DAEFFF]'
+                          : 'text-[#DAEFFF]/60 hover:text-[#DAEFFF] hover:bg-[#263947]/60'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           {/* Mobile menu toggle */}
           <button
@@ -112,27 +155,28 @@ export function NavbarClient({ lang, dict }: NavbarClientProps) {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-[#DAEFFF]/80 hover:text-[#E4E969] text-base font-medium transition-colors py-1"
+              className="text-[#DAEFFF]/85 hover:text-[#DAEFFF] text-base font-medium transition-colors py-1"
             >
               {link.label}
             </Link>
           ))}
-          <div className="flex items-center gap-3 pt-2 border-t border-[#263947]">
-            <button
-              onClick={() => { switchLang(); setMobileOpen(false) }}
-              className="text-xs font-semibold text-[#DAEFFF]/50 hover:text-[#E4E969] transition-colors px-3 py-1.5 rounded border border-[#263947]"
-            >
-              {lang === 'en' ? 'GEO' : 'ENG'}
-            </button>
-            <button
-              onClick={() => {
-                openModal()
-                setMobileOpen(false)
-              }}
-              className="bg-[#E4E969] text-[#0C1A23] text-xs font-bold px-5 py-2.5 rounded-full"
-            >
-              {nav.contact}
-            </button>
+          <div className="flex items-center gap-2 pt-3 border-t border-[#263947]">
+            {LANG_OPTIONS.map((opt) => (
+              <button
+                key={opt.code}
+                onClick={() => {
+                  selectLang(opt.code)
+                  setMobileOpen(false)
+                }}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                  opt.code === lang
+                    ? 'bg-[#DAEFFF] text-[#0C1A23] border-[#DAEFFF]'
+                    : 'text-[#DAEFFF]/70 border-[#DAEFFF]/30 hover:border-[#DAEFFF]/60'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

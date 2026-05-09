@@ -10,7 +10,9 @@ export function SectionHeading({ badge, title, subtitle, align = 'left', light =
   const alignClass = align === 'center' ? 'text-center items-center' : 'text-left items-start'
   const titleColor = light ? 'text-[#0C1A23]' : 'text-[#DAEFFF]'
   const subtitleColor = light ? 'text-[#263947]/70' : 'text-[#DAEFFF]/60'
-  const badgeBg = light ? 'bg-[#0C1A23]/10 text-[#0C1A23]' : 'bg-[#E4E969]/15 text-[#E4E969]'
+  const badgeBg = light
+    ? 'bg-[#0C1A23]/10 text-[#0C1A23]'
+    : 'bg-[#DAEFFF]/10 text-[#DAEFFF] border border-[#DAEFFF]/20'
 
   return (
     <div className={`flex flex-col gap-3 ${alignClass}`}>

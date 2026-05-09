@@ -23,7 +23,7 @@ export function BlogsSection({ dict, lang }: BlogsSectionProps) {
           />
           <Link
             href={`/${lang}/blog`}
-            className="hidden sm:flex items-center gap-1.5 text-[#E4E969] text-sm font-semibold flex-shrink-0 hover:text-[#FAFFC5] transition-colors"
+            className="hidden sm:flex items-center gap-1.5 text-[#DAEFFF] text-sm font-semibold flex-shrink-0 hover:text-white transition-colors"
           >
             {b.viewAll}
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -47,7 +47,7 @@ export function BlogsSection({ dict, lang }: BlogsSectionProps) {
         <div className="sm:hidden flex justify-center mt-8">
           <Link
             href={`/${lang}/blog`}
-            className="flex items-center gap-1.5 text-[#E4E969] text-sm font-semibold"
+            className="flex items-center gap-1.5 text-[#DAEFFF] text-sm font-semibold"
           >
             {b.viewAll}
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
