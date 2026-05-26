@@ -1,4 +1,5 @@
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { BenefitIcon } from '@/components/ui/BenefitIcon'
 import type { Locale, Product } from '@/lib/types'
 
 interface KeyBenefitsProps {
@@ -10,21 +11,30 @@ interface KeyBenefitsProps {
 
 export function KeyBenefits({ product, lang, dict }: KeyBenefitsProps) {
   return (
-    <section className="bg-[#263947]/20 py-24">
+    <section className="bg-[#DAEFFF] py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <SectionHeading title={dict.product.keyBenefits} align="center" />
+        <SectionHeading title={dict.product.keyBenefits} align="center" light />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-          {product.benefits.map((benefit) => (
-            <div
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#0C1A23]/8 mt-14 rounded-2xl overflow-hidden ring-1 ring-[#0C1A23]/8">
+          {product.benefits.map((benefit, i) => (
+            <article
               key={benefit.title[lang]}
-              className="flex flex-col gap-3 bg-[#0C1A23] border border-[#263947] rounded-2xl p-6 hover:border-[#E4E969]/30 transition-colors"
+              className="group relative flex flex-col gap-4 bg-white p-7 hover:bg-[#FAFFC5]/40 transition-colors duration-300"
             >
-              {/* Icon */}
-              <div className="text-3xl">{benefit.icon}</div>
-              <h3 className="text-[#DAEFFF] font-bold text-base">{benefit.title[lang]}</h3>
-              <p className="text-[#DAEFFF]/60 text-sm leading-relaxed">{benefit.body[lang]}</p>
-            </div>
+              {/* Index */}
+              <div className="flex items-center justify-between">
+                <span className="text-[#0C1A23]/40 text-[11px] font-semibold tracking-[0.2em] tabular-nums">
+                  {String(i + 1).padStart(2, '0')} / {String(product.benefits.length).padStart(2, '0')}
+                </span>
+                <BenefitIcon name={benefit.icon} className="text-[#0C1A23]" />
+              </div>
+
+              {/* Divider */}
+              <div className="h-px bg-[#0C1A23]/10 w-8 group-hover:w-16 group-hover:bg-[#0C1A23]/30 transition-all duration-500" />
+
+              <h3 className="text-[#0C1A23] font-bold text-lg leading-tight">{benefit.title[lang]}</h3>
+              <p className="text-[#263947]/70 text-sm leading-relaxed">{benefit.body[lang]}</p>
+            </article>
           ))}
         </div>
       </div>

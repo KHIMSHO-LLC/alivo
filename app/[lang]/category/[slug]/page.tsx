@@ -45,7 +45,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <>
-      <CategoryHero category={category} lang={lang as Locale} dict={dict} />
+      <CategoryHero
+        category={category}
+        lang={lang as Locale}
+        productCount={allProducts.length}
+        dict={dict}
+      />
 
       {/* Bestsellers */}
       {bestsellers.length > 0 && (
@@ -54,18 +59,20 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           lang={lang as Locale}
           dict={dict}
           title={dict.category.bestsellers}
+          eyebrow="Most loved"
+          anchor="products"
         />
       )}
 
       {/* All products */}
-      <div className="bg-[#263947]/10">
-        <ProductGrid
-          products={allProducts}
-          lang={lang as Locale}
-          dict={dict}
-          title={dict.category.allProducts}
-        />
-      </div>
+      <ProductGrid
+        products={allProducts}
+        lang={lang as Locale}
+        dict={dict}
+        title={dict.category.allProducts}
+        eyebrow="Full range"
+        anchor={bestsellers.length === 0 ? 'products' : undefined}
+      />
 
       <ExplainerSection category={category} lang={lang as Locale} dict={dict} />
       <AboutFantiniSection dict={dict} />

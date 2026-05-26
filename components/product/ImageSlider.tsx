@@ -9,8 +9,6 @@ interface ImageSliderProps {
   productName: string
 }
 
-const ACCENT_COLORS = ['#263947', '#0C1A23', '#1a2d3d', '#1e3448']
-
 export function ImageSlider({ images, placeholderColor, productName }: ImageSliderProps) {
   const [active, setActive] = useState(0)
   const slides = images.length || 1
@@ -21,7 +19,10 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
   return (
     <div className="flex flex-col gap-4">
       {/* Main slide */}
-      <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}>
+      <div
+        className="relative rounded-2xl overflow-hidden"
+        style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}
+      >
         {images.length > 0 && images[active] ? (
           <Image
             src={images[active]}
@@ -32,31 +33,28 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
           />
         ) : (
           <>
-            {/* Dot pattern */}
+            {/* Subtle dot pattern (light blue accent) */}
             <div
               className="absolute inset-0 opacity-10"
               style={{
-                backgroundImage: 'radial-gradient(circle, #E4E969 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(circle, #DAEFFF 1px, transparent 1px)',
                 backgroundSize: '22px 22px',
               }}
             />
-            {/* Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/40" />
-
             {/* Centered label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <div className="w-24 h-24 rounded-full border-2 border-[#E4E969]/30 flex items-center justify-center">
-                <div className="w-14 h-14 rounded-full border-2 border-[#E4E969]/50 flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full bg-[#E4E969]/20 border border-[#E4E969]" />
+              <div className="w-24 h-24 rounded-full border-2 border-[#DAEFFF]/25 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full border-2 border-[#DAEFFF]/40 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-[#DAEFFF]/20 border border-[#DAEFFF]/60" />
                 </div>
               </div>
-              <p className="text-white/30 text-xs tracking-widest uppercase">{productName}</p>
+              <p className="text-[#DAEFFF]/40 text-xs tracking-widest uppercase">{productName}</p>
             </div>
           </>
         )}
 
         {/* Slide counter */}
-        <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm text-white/70 text-xs px-2.5 py-1 rounded-full">
+        <div className="absolute top-4 right-4 bg-[#0C1A23]/55 backdrop-blur-sm text-[#DAEFFF]/80 text-xs px-2.5 py-1 rounded-full">
           {active + 1} / {slides}
         </div>
 
@@ -65,7 +63,7 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white flex items-center justify-center transition-colors"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#0C1A23]/55 backdrop-blur-sm hover:bg-[#0C1A23]/80 text-[#DAEFFF] flex items-center justify-center transition-colors"
               aria-label="Previous image"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -74,7 +72,7 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white flex items-center justify-center transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#0C1A23]/55 backdrop-blur-sm hover:bg-[#0C1A23]/80 text-[#DAEFFF] flex items-center justify-center transition-colors"
               aria-label="Next image"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -85,7 +83,7 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
         )}
       </div>
 
-      {/* Thumbnail dots / thumbnails */}
+      {/* Thumbnails */}
       {slides > 1 && (
         <div className="flex gap-2">
           {images.map((img, i) => (
@@ -93,7 +91,7 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
               key={i}
               onClick={() => setActive(i)}
               className="relative rounded-lg overflow-hidden flex-1 transition-all duration-200"
-              style={{ aspectRatio: '4/3', backgroundColor: ACCENT_COLORS[i % ACCENT_COLORS.length] }}
+              style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}
             >
               {img ? (
                 <Image
@@ -104,10 +102,14 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
                 />
               ) : null}
               <div
-                className={`absolute inset-0 transition-opacity ${i === active ? 'opacity-0' : 'opacity-60 bg-black'}`}
+                className={`absolute inset-0 transition-opacity ${
+                  i === active ? 'opacity-0' : 'opacity-60 bg-[#0C1A23]'
+                }`}
               />
               <div
-                className={`absolute inset-0 border-2 rounded-lg transition-colors ${i === active ? 'border-[#E4E969]' : 'border-transparent'}`}
+                className={`absolute inset-0 border-2 rounded-lg transition-colors ${
+                  i === active ? 'border-[#DAEFFF]' : 'border-transparent'
+                }`}
               />
             </button>
           ))}
