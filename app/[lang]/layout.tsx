@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { avivoFont } from '@/app/fonts'
 import { hasLocale, getDictionary } from './dictionaries'
 import { ModalProvider } from '@/components/providers/ModalProvider'
@@ -27,6 +28,22 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
 }
 
+function PageLoader() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="relative w-12 h-12">
+        {/* Outer glowing track */}
+        <div className="absolute inset-0 rounded-full border-2 border-[#DAEFFF]/10" />
+        {/* Spinning accent */}
+        <div className="absolute inset-0 rounded-full border-2 border-t-[#E4E969] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+      </div>
+      <p className="text-[#DAEFFF]/45 text-[10px] font-semibold tracking-[0.25em] uppercase animate-pulse">
+        Loading...
+      </p>
+    </div>
+  )
+}
+
 export default async function LangLayout({ children, params }: LangLayoutProps) {
   const { lang } = await params
 
@@ -41,10 +58,15 @@ export default async function LangLayout({ children, params }: LangLayoutProps) 
       <body className="min-h-full flex flex-col bg-[#0C1A23] antialiased">
         <ModalProvider dict={dict}>
           <NavbarClient lang={lang as Locale} dict={dict} />
-          <main className="flex-1 pt-16">{children}</main>
+          <main className="flex-1 pt-16">
+            <Suspense fallback={<PageLoader />}>
+              {children}
+            </Suspense>
+          </main>
           <Footer lang={lang as Locale} dict={dict} />
         </ModalProvider>
       </body>
     </html>
   )
 }
+

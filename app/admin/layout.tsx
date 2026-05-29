@@ -1,3 +1,5 @@
+export const unstable_instant = false
+
 import type { Metadata } from 'next'
 import { avivoFont } from '@/app/fonts'
 import { cookies } from 'next/headers'

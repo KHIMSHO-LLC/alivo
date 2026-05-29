@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { ModalTrigger } from '@/components/ui/ModalTrigger'
 import type { Locale } from '@/lib/types'
 
 interface AboutSectionProps {
@@ -26,6 +27,9 @@ export function AboutSection({ dict }: AboutSectionProps) {
           <div className="lg:col-span-4 flex flex-col gap-6">
             <SectionHeading badge={a.sectionBadge} title={a.headline} />
             <p className="text-[#DAEFFF]/70 text-base leading-relaxed">{a.body}</p>
+            <div className="pt-2">
+              <ModalTrigger label={dict.nav.contact} variant="outline" />
+            </div>
           </div>
 
           {/* Right: 3 feature cards */}

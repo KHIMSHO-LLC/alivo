@@ -30,7 +30,7 @@ export async function ProductCategories({ dict, lang }: ProductCategoriesProps) 
             <Link
               key={cat.slug}
               href={`/${lang}/category/${cat.slug}`}
-              className="group relative overflow-hidden rounded-3xl bg-[#0C1A23] ring-1 ring-transparent hover:ring-2 hover:ring-[#0C1A23]/30 hover:shadow-xl hover:shadow-[#0C1A23]/10 transition-all duration-300"
+              className="group relative overflow-hidden rounded-3xl bg-[#0C1A23] ring-1 ring-[#DAEFFF]/15 hover:ring-2 hover:ring-[#DAEFFF]/55 hover:shadow-2xl hover:shadow-[#DAEFFF]/5 transition-all duration-300"
             >
               {/* Image area */}
               <div className="relative w-full aspect-video overflow-hidden">
@@ -39,7 +39,7 @@ export async function ProductCategories({ dict, lang }: ProductCategoriesProps) 
                     src={cat.images[0]}
                     alt={cat.name[lang]}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.06] group-hover:brightness-[1.08]"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 ) : (

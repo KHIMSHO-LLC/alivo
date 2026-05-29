@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/types";
 
+import { CurrentYear } from "@/components/ui/CurrentYear";
+
 interface FooterProps {
   lang: Locale;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,7 +49,6 @@ const SOCIALS: SocialLink[] = [
 
 export function Footer({ lang, dict }: FooterProps) {
   const f = dict.footer;
-  const year = new Date().getFullYear();
 
   // CSS mask to tint the white logo PNG to light blue
   const maskedLogoStyle: React.CSSProperties = {
@@ -55,8 +56,8 @@ export function Footer({ lang, dict }: FooterProps) {
     maskImage: 'url(/logos/Alivo-white.png)',
     WebkitMaskRepeat: 'no-repeat',
     maskRepeat: 'no-repeat',
-    WebkitMaskPosition: 'center',
-    maskPosition: 'center',
+    WebkitMaskPosition: 'left center',
+    maskPosition: 'left center',
     WebkitMaskSize: 'contain',
     maskSize: 'contain',
     backgroundColor: '#DAEFFF',
@@ -66,9 +67,9 @@ export function Footer({ lang, dict }: FooterProps) {
     <footer className="bg-[#0C1A23] border-t border-[#263947]/60">
       <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand — centered stack on the left */}
-          <div className="md:col-span-1 flex flex-col items-center text-center gap-4">
-            <Link href={`/${lang}`} aria-label="Alivo home">
+          {/* Brand — left-aligned on desktop, centered on mobile */}
+          <div className="md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left gap-4">
+            <Link href={`/${lang}`} aria-label="Alivo home" className="flex justify-center md:justify-start w-full">
               <span
                 role="img"
                 aria-label="Alivo"
@@ -183,7 +184,7 @@ export function Footer({ lang, dict }: FooterProps) {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-[#263947]/60 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#DAEFFF]/35 text-xs">
-            © {year} Alivo. {f.rights}.
+            © <CurrentYear /> Alivo. {f.rights}.
           </p>
           <div className="flex items-center gap-5">
             <Link

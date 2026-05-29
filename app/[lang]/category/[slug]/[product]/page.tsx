@@ -1,3 +1,5 @@
+export const unstable_instant = { prefetch: 'static', unstable_disableValidation: true }
+
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { hasLocale, getDictionary } from '../../../dictionaries'
