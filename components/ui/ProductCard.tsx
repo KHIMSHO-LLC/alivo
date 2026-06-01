@@ -6,8 +6,6 @@ import type { Locale, Product } from '@/lib/types'
 interface ProductCardProps {
   product: Product
   lang: Locale
-  index?: number
-  total?: number
   bestsellersLabel?: string
   learnMoreLabel?: string
 }
@@ -15,12 +13,9 @@ interface ProductCardProps {
 export function ProductCard({
   product,
   lang,
-  index,
-  total,
   bestsellersLabel = 'Bestseller',
   learnMoreLabel = 'View product',
 }: ProductCardProps) {
-  const showIndex = typeof index === 'number' && typeof total === 'number'
   const quickSpec = product.features[0]
 
   return (
@@ -49,13 +44,6 @@ export function ProductCard({
             aspectRatio="4/3"
             className="rounded-none"
           />
-        )}
-
-        {/* Index */}
-        {showIndex && (
-          <span className="absolute top-4 left-4 text-[#DAEFFF]/80 text-[10px] font-semibold tracking-[0.25em] tabular-nums uppercase">
-            {String(index! + 1).padStart(2, '0')} / {String(total!).padStart(2, '0')}
-          </span>
         )}
 
         {/* Bestseller */}
@@ -87,6 +75,12 @@ export function ProductCard({
         <p className="text-[#DAEFFF]/55 text-sm leading-relaxed line-clamp-2">
           {product.tagline[lang]}
         </p>
+
+        {typeof product.price === 'number' && (
+          <p className="text-[#DAEFFF] font-black text-2xl tabular-nums tracking-tight mt-3">
+            ₾{product.price.toLocaleString()}
+          </p>
+        )}
 
         <div className="mt-auto pt-5">
           <div className="h-px bg-[#DAEFFF]/10 mb-4" />

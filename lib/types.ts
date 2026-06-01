@@ -16,6 +16,10 @@ export interface Product {
   images: string[]
   benefits: ProductBenefit[]
   features: ProductFeature[]
+  /** Price in Georgian lari (₾). Optional — hidden in UI when absent. */
+  price?: number
+  /** Specs grouped into named categories. Falls back to a single group built from `features` when absent. */
+  specGroups?: SpecGroup[]
 }
 
 export interface ProductBenefit {
@@ -27,6 +31,11 @@ export interface ProductBenefit {
 export interface ProductFeature {
   label: BilingualText
   value: BilingualText
+}
+
+export interface SpecGroup {
+  title: BilingualText
+  items: ProductFeature[]
 }
 
 export interface Category {

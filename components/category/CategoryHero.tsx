@@ -29,9 +29,8 @@ export function CategoryHero({ category, lang, productCount, dict }: CategoryHer
         className="object-cover"
       />
 
-      {/* Solid readability overlays */}
-      <div className="absolute inset-0 bg-[#0C1A23]/55" aria-hidden="true" />
-      <div className="absolute inset-y-0 left-0 w-full md:w-2/3 bg-[#0C1A23]/45" aria-hidden="true" />
+      {/* Uniform readability overlay across the entire visual */}
+      <div className="absolute inset-0 bg-[#0C1A23]/60" aria-hidden="true" />
 
       {/* Top editorial bar: breadcrumb + meta */}
       <div className="relative max-w-7xl mx-auto px-6 pt-28 w-full">
@@ -49,64 +48,36 @@ export function CategoryHero({ category, lang, productCount, dict }: CategoryHer
         </div>
       </div>
 
-      {/* Headline block */}
+      {/* Headline block — left-aligned, flush with the breadcrumb above */}
       <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-20 w-full">
-        <div className="grid grid-cols-12 gap-6 items-end">
-          {/* Vertical accent line */}
-          <div className="hidden md:block col-span-1">
-            <div className="h-32 w-px bg-[#DAEFFF]/30 ml-auto reveal" style={{ animationDelay: '240ms' }} />
-          </div>
+        <div className="flex flex-col gap-6 items-start max-w-3xl">
+          <h1
+            className="text-[clamp(2.75rem,7vw,5.5rem)] font-black leading-[0.95] tracking-[-0.02em] text-[#DAEFFF] reveal"
+            style={{ animationDelay: '200ms' }}
+          >
+            {category.heroTagline[lang]}
+          </h1>
 
-          {/* Main content */}
-          <div className="col-span-12 md:col-span-8 flex flex-col gap-6">
-            <span
-              className="inline-flex w-fit items-center gap-2 text-[10px] font-semibold tracking-[0.25em] uppercase text-[#DAEFFF]/80 reveal"
-              style={{ animationDelay: '120ms' }}
+          <p
+            className="text-[#DAEFFF]/75 text-lg leading-relaxed max-w-xl reveal"
+            style={{ animationDelay: '320ms' }}
+          >
+            {category.description[lang]}
+          </p>
+
+          <div className="pt-4 flex items-center gap-6 reveal" style={{ animationDelay: '420ms' }}>
+            <ModalTrigger label={dict.category.getQuote} variant="primary" />
+            <a
+              href="#products"
+              className="hidden sm:inline-flex items-center gap-2 text-[#DAEFFF] text-sm font-semibold group"
             >
-              <span className="w-6 h-px bg-[#DAEFFF]/60" />
-              {category.name[lang]}
-            </span>
-
-            <h1
-              className="text-[clamp(2.75rem,7vw,5.5rem)] font-black leading-[0.95] tracking-[-0.02em] text-[#DAEFFF] reveal"
-              style={{ animationDelay: '200ms' }}
-            >
-              {category.heroTagline[lang]}
-            </h1>
-
-            <p
-              className="text-[#DAEFFF]/75 text-lg leading-relaxed max-w-xl reveal"
-              style={{ animationDelay: '320ms' }}
-            >
-              {category.description[lang]}
-            </p>
-
-            <div className="pt-4 flex items-center gap-6 reveal" style={{ animationDelay: '420ms' }}>
-              <ModalTrigger label={dict.category.getQuote} variant="primary" />
-              <a
-                href="#products"
-                className="hidden sm:inline-flex items-center gap-2 text-[#DAEFFF] text-sm font-semibold group"
-              >
-                <span className="border-b border-[#DAEFFF]/40 group-hover:border-[#DAEFFF] transition-colors pb-0.5">
-                  Browse all
-                </span>
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-y-0.5">
-                  <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          {/* Right meta column */}
-          <div className="hidden md:flex col-span-3 flex-col gap-4 items-end text-right reveal" style={{ animationDelay: '380ms' }}>
-            <div>
-              <p className="text-[10px] tracking-[0.25em] uppercase text-[#DAEFFF]/40 mb-1.5">Origin</p>
-              <p className="text-[#DAEFFF] text-sm font-semibold">Milano, Italia</p>
-            </div>
-            <div>
-              <p className="text-[10px] tracking-[0.25em] uppercase text-[#DAEFFF]/40 mb-1.5">Brand</p>
-              <p className="text-[#DAEFFF] text-sm font-semibold">Fantini Cosmi</p>
-            </div>
+              <span className="border-b border-[#DAEFFF]/40 group-hover:border-[#DAEFFF] transition-colors pb-0.5">
+                Browse all
+              </span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-y-0.5">
+                <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

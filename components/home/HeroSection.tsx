@@ -26,10 +26,8 @@ export function HeroSection({ dict }: HeroSectionProps) {
         className="object-cover"
       />
 
-      {/* Solid readability overlay (no gradient) */}
-      <div className="absolute inset-0 bg-[#0C1A23]/55" aria-hidden="true" />
-      {/* Extra darken on the left where text sits, also solid */}
-      <div className="absolute inset-y-0 left-0 w-full md:w-1/2 bg-[#0C1A23]/45" aria-hidden="true" />
+      {/* Uniform readability overlay across the entire visual */}
+      <div className="absolute inset-0 bg-[#0C1A23]/60" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-24 w-full">
         <div className="max-w-2xl flex flex-col gap-6">

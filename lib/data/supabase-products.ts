@@ -1,5 +1,5 @@
 import { supabase as getSupabase } from '@/lib/supabase'
-import type { Category, Product } from '@/lib/types'
+import type { Category, Product, SpecGroup } from '@/lib/types'
 
 type DatabaseCategory = {
   id: string
@@ -27,6 +27,8 @@ type DatabaseProduct = {
   images: string[]
   benefits: any
   features: any
+  price: number | null
+  spec_groups: SpecGroup[] | null
   created_at: string
 }
 
@@ -56,6 +58,8 @@ function mapProduct(dbProduct: DatabaseProduct): Product {
     images: dbProduct.images || [],
     benefits: dbProduct.benefits,
     features: dbProduct.features,
+    price: dbProduct.price ?? undefined,
+    specGroups: dbProduct.spec_groups ?? undefined,
   }
 }
 

@@ -18,10 +18,10 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Main slide */}
+      {/* Main slide — square frame */}
       <div
         className="relative rounded-2xl overflow-hidden"
-        style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}
+        style={{ aspectRatio: '1/1', backgroundColor: placeholderColor }}
       >
         {images.length > 0 && images[active] ? (
           <Image
@@ -53,11 +53,6 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
           </>
         )}
 
-        {/* Slide counter */}
-        <div className="absolute top-4 right-4 bg-[#0C1A23]/55 backdrop-blur-sm text-[#DAEFFF]/80 text-xs px-2.5 py-1 rounded-full">
-          {active + 1} / {slides}
-        </div>
-
         {/* Arrows */}
         {slides > 1 && (
           <>
@@ -82,39 +77,6 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
           </>
         )}
       </div>
-
-      {/* Thumbnails */}
-      {slides > 1 && (
-        <div className="flex gap-2">
-          {images.map((img, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className="relative rounded-lg overflow-hidden flex-1 transition-all duration-200"
-              style={{ aspectRatio: '4/3', backgroundColor: placeholderColor }}
-            >
-              {img ? (
-                <Image
-                  src={img}
-                  alt={`${productName} thumbnail ${i + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              ) : null}
-              <div
-                className={`absolute inset-0 transition-opacity ${
-                  i === active ? 'opacity-0' : 'opacity-60 bg-[#0C1A23]'
-                }`}
-              />
-              <div
-                className={`absolute inset-0 border-2 rounded-lg transition-colors ${
-                  i === active ? 'border-[#DAEFFF]' : 'border-transparent'
-                }`}
-              />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

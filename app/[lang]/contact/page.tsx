@@ -40,16 +40,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
           <span className="text-[#DAEFFF]">{c.badge}</span>
         </nav>
 
-        {/* Section rail */}
-        <div className="flex items-center justify-between mb-14 text-[10px] font-semibold tracking-[0.25em] uppercase text-[#DAEFFF]/40 reveal" style={{ animationDelay: '80ms' }}>
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-[#DAEFFF]/30" />
-            <span>Get in touch</span>
-          </div>
-          <span className="tabular-nums">§ 01</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 items-start mt-4">
           {/* Left: editorial column */}
           <div className="lg:col-span-7 flex flex-col gap-10">
             <h1
@@ -124,16 +115,6 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   className="object-cover"
                 />
                 <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0C1A23]/80 to-transparent" />
-
-                <div className="absolute top-5 left-5 text-[#DAEFFF]/70 text-[10px] tracking-[0.25em] uppercase font-semibold tabular-nums">
-                  GE — TBILISI
-                </div>
-
-                <figcaption className="absolute inset-x-0 bottom-0 p-6">
-                  <p className="text-[#DAEFFF]/60 text-[10px] tracking-[0.25em] uppercase mb-2">Showroom</p>
-                  <p className="text-[#DAEFFF] text-lg font-bold tracking-tight">By appointment</p>
-                  <div className="mt-3 h-px w-10 bg-[#DAEFFF]/40" />
-                </figcaption>
               </div>
             </figure>
           </div>

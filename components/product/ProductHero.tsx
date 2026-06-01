@@ -39,17 +39,8 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          {/* Left: image slider (7/12) */}
-          <div className="lg:col-span-7 reveal" style={{ animationDelay: '120ms' }}>
-            <ImageSlider
-              images={product.images}
-              placeholderColor={product.placeholderColor}
-              productName={product.name[lang]}
-            />
-          </div>
-
-          {/* Right: product info (5/12) */}
-          <div className="lg:col-span-5 flex flex-col gap-7 reveal" style={{ animationDelay: '240ms' }}>
+          {/* Left: product info */}
+          <div className="lg:col-span-6 flex flex-col gap-7 reveal" style={{ animationDelay: '120ms' }}>
             {/* Eyebrow + bestseller */}
             <div className="flex items-center gap-3 flex-wrap">
               <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.25em] uppercase text-[#DAEFFF]/70">
@@ -74,20 +65,31 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
 
             <p className="text-[#DAEFFF]/55 text-[15px] leading-[1.7]">{product.description[lang]}</p>
 
-            {/* Quick specs — clean row layout */}
-            {product.features.length > 0 && (
-              <div className="border-t border-[#DAEFFF]/15 divide-y divide-[#DAEFFF]/10">
-                {product.features.slice(0, 4).map((feat) => (
-                  <div key={feat.label[lang]} className="flex items-center justify-between py-3.5 gap-4">
-                    <span className="text-[#DAEFFF]/45 text-[11px] tracking-[0.2em] uppercase">
-                      {feat.label[lang]}
-                    </span>
-                    <span className="text-[#DAEFFF] text-sm font-semibold tabular-nums">
-                      {feat.value[lang]}
-                    </span>
-                  </div>
+            {/* Main benefits — bullet list */}
+            {product.benefits.length > 0 && (
+              <ul className="flex flex-col gap-3">
+                {product.benefits.map((benefit) => (
+                  <li key={benefit.title[lang]} className="flex items-start gap-3">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      className="mt-0.5 flex-shrink-0 text-[#E4E969]"
+                    >
+                      <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-[#DAEFFF]/85 text-[15px] leading-snug">{benefit.title[lang]}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
+            )}
+
+            {/* Price */}
+            {typeof product.price === 'number' && (
+              <p className="text-[#DAEFFF] font-black text-3xl md:text-4xl tabular-nums tracking-tight">
+                ₾{product.price.toLocaleString()}
+              </p>
             )}
 
             {/* CTA row */}
@@ -105,6 +107,15 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
                 </svg>
               </a>
             </div>
+          </div>
+
+          {/* Right: image slider (square frame) */}
+          <div className="lg:col-span-6 reveal" style={{ animationDelay: '240ms' }}>
+            <ImageSlider
+              images={product.images}
+              placeholderColor={product.placeholderColor}
+              productName={product.name[lang]}
+            />
           </div>
         </div>
       </div>

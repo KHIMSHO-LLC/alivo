@@ -9,13 +9,27 @@ interface KeyBenefitsProps {
   dict: Record<string, any>
 }
 
+// Column count adapts to the number of benefits so few benefits don't leave empty cells.
+const LG_COLS: Record<number, string> = {
+  1: 'lg:grid-cols-1',
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3',
+  4: 'lg:grid-cols-4',
+}
+
 export function KeyBenefits({ product, lang, dict }: KeyBenefitsProps) {
+  const count = product.benefits.length
+  if (count === 0) return null
+
+  const lgCols = LG_COLS[Math.min(count, 4)]
+  const smCols = count >= 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-1'
+
   return (
     <section className="bg-[#DAEFFF] py-24">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeading title={dict.product.keyBenefits} align="center" light />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#0C1A23]/8 mt-14 rounded-2xl overflow-hidden ring-1 ring-[#0C1A23]/8">
+        <div className={`grid grid-cols-1 ${smCols} ${lgCols} gap-px bg-[#0C1A23]/8 mt-14 rounded-2xl overflow-hidden ring-1 ring-[#0C1A23]/8`}>
           {product.benefits.map((benefit, i) => (
             <article
               key={benefit.title[lang]}

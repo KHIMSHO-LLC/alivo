@@ -3,7 +3,7 @@ export const unstable_instant = { prefetch: 'static', unstable_disableValidation
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { hasLocale, getDictionary } from '../../dictionaries'
-import { getCategoryBySlug, getProductsByCategory, getBestsellers } from '@/lib/data/supabase-products'
+import { getCategoryBySlug, getProductsByCategory } from '@/lib/data/supabase-products'
 import { CategoryHero } from '@/components/category/CategoryHero'
 import { ProductGrid } from '@/components/category/ProductGrid'
 import { ExplainerSection } from '@/components/category/ExplainerSection'
@@ -43,7 +43,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const dict = await getDictionary(lang as Locale)
   const allProducts = await getProductsByCategory(slug)
-  const bestsellers = await getBestsellers(slug)
 
   return (
     <>
@@ -54,26 +53,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         dict={dict}
       />
 
-      {/* Bestsellers */}
-      {bestsellers.length > 0 && (
-        <ProductGrid
-          products={bestsellers}
-          lang={lang as Locale}
-          dict={dict}
-          title={dict.category.bestsellers}
-          eyebrow="Most loved"
-          anchor="products"
-        />
-      )}
-
-      {/* All products */}
+      {/* All products — single unified grid */}
       <ProductGrid
         products={allProducts}
         lang={lang as Locale}
         dict={dict}
         title={dict.category.allProducts}
-        eyebrow="Full range"
-        anchor={bestsellers.length === 0 ? 'products' : undefined}
+        anchor="products"
       />
 
       <ExplainerSection category={category} lang={lang as Locale} dict={dict} />

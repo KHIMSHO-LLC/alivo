@@ -1,4 +1,4 @@
-import type { Category, Product } from '../types'
+import type { BilingualText, Category, Product } from '../types'
 
 export const CATEGORIES: Category[] = [
   {
@@ -381,6 +381,70 @@ export const PRODUCTS: Product[] = [
     ],
   },
 ]
+
+// --- Pricing (GEL, ₾) and grouped specifications -------------------------
+// Placeholder prices — adjust to real values (or populate the Supabase `price` column).
+const PRICE_GEL: Record<string, number> = {
+  'reco-100': 1890,
+  'reco-200': 2790,
+  'reco-slim': 990,
+  'vento-pro': 640,
+  'vento-silent': 790,
+}
+
+const GROUP_TITLES = {
+  performance: { en: 'Performance', ka: 'წარმადობა' },
+  acousticsPower: { en: 'Acoustics & Power', ka: 'ხმაური და სიმძლავრე' },
+  build: { en: 'Filtration & Build', ka: 'ფილტრაცია და კონსტრუქცია' },
+  smart: { en: 'Smart Features', ka: 'ჭკვიანი ფუნქციები' },
+  sensing: { en: 'Sensing', ka: 'სენსორები' },
+  installation: { en: 'Installation', ka: 'მონტაჟი' },
+} satisfies Record<string, BilingualText>
+
+// Maps each product to ordered groups, referencing feature labels (EN) — keeps
+// bilingual values sourced from `features`, no duplication.
+const SPEC_GROUP_PLAN: Record<string, { title: BilingualText; labels: string[] }[]> = {
+  'reco-100': [
+    { title: GROUP_TITLES.performance, labels: ['Air Flow', 'Heat Recovery', 'Coverage Area'] },
+    { title: GROUP_TITLES.acousticsPower, labels: ['Noise Level', 'Power Consumption'] },
+    { title: GROUP_TITLES.build, labels: ['Filter Class', 'Dimensions', 'Weight'] },
+  ],
+  'reco-200': [
+    { title: GROUP_TITLES.performance, labels: ['Air Flow', 'Heat Recovery', 'Coverage Area', 'Exchanger Type'] },
+    { title: GROUP_TITLES.acousticsPower, labels: ['Noise Level', 'Power Consumption'] },
+    { title: GROUP_TITLES.smart, labels: ['Connectivity', 'Weight'] },
+  ],
+  'reco-slim': [
+    { title: GROUP_TITLES.performance, labels: ['Air Flow', 'Heat Recovery', 'Coverage Area'] },
+    { title: GROUP_TITLES.acousticsPower, labels: ['Noise Level', 'Power Consumption'] },
+    { title: GROUP_TITLES.installation, labels: ['Core Diameter'] },
+  ],
+  'vento-pro': [
+    { title: GROUP_TITLES.performance, labels: ['Air Flow'] },
+    { title: GROUP_TITLES.sensing, labels: ['Humidity Sensor', 'Sensors'] },
+    { title: GROUP_TITLES.acousticsPower, labels: ['Noise Level', 'Power Consumption'] },
+    { title: GROUP_TITLES.installation, labels: ['Duct Diameter'] },
+  ],
+  'vento-silent': [
+    { title: GROUP_TITLES.performance, labels: ['Air Flow'] },
+    { title: GROUP_TITLES.acousticsPower, labels: ['Min Noise Level', 'Power Consumption'] },
+    { title: GROUP_TITLES.smart, labels: ['CO₂ Sensor', 'Night Mode'] },
+    { title: GROUP_TITLES.installation, labels: ['Duct Diameter'] },
+  ],
+}
+
+for (const product of PRODUCTS) {
+  product.price = PRICE_GEL[product.slug]
+  const plan = SPEC_GROUP_PLAN[product.slug]
+  if (plan) {
+    product.specGroups = plan.map((group) => ({
+      title: group.title,
+      items: group.labels
+        .map((label) => product.features.find((f) => f.label.en === label))
+        .filter((f): f is NonNullable<typeof f> => Boolean(f)),
+    }))
+  }
+}
 
 export function getCategoryBySlug(slug: string): Category | undefined {
   return CATEGORIES.find((c) => c.slug === slug)
