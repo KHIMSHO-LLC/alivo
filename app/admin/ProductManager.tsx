@@ -18,6 +18,7 @@ type ProductRow = {
   images: string[]
   benefits: unknown
   features: unknown
+  price: number | null
 }
 
 type CategoryOption = { id: string; slug: string; name: BilText }
@@ -31,6 +32,7 @@ const EMPTY_FORM = {
   description: { en: '', ka: '' },
   is_bestseller: false,
   placeholder_color: '#263947',
+  price: '' as string,
   images: [] as string[],
   benefits_json: '[{"icon": "🌬️", "title": {"en": "", "ka": ""}, "body": {"en": "", "ka": ""}}]',
   features_json: '[{"label": {"en": "", "ka": ""}, "value": {"en": "", "ka": ""}}]',
@@ -113,6 +115,7 @@ export function ProductManager() {
       description: product.description,
       is_bestseller: product.is_bestseller,
       placeholder_color: product.placeholder_color,
+      price: product.price != null ? String(product.price) : '',
       images: product.images || [],
       benefits_json: JSON.stringify(product.benefits ?? [], null, 2),
       features_json: JSON.stringify(product.features ?? [], null, 2),
@@ -189,6 +192,19 @@ export function ProductManager() {
       return
     }
 
+    // Price is optional; empty clears it, otherwise must be a non-negative number.
+    const trimmedPrice = form.price.trim()
+    let price: number | null = null
+    if (trimmedPrice !== '') {
+      const parsed = Number(trimmedPrice)
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        setError('Price must be a non-negative number')
+        setLoading(false)
+        return
+      }
+      price = parsed
+    }
+
     const record = {
       slug: form.slug,
       name: form.name,
@@ -197,6 +213,7 @@ export function ProductManager() {
       description: form.description,
       is_bestseller: form.is_bestseller,
       placeholder_color: form.placeholder_color,
+      price,
       images,
       benefits,
       features,
@@ -252,6 +269,9 @@ export function ProductManager() {
                 <p className="font-semibold text-sm">{product.name?.en || product.slug}</p>
                 <p className="text-xs text-[#DAEFFF]/40">{product.category_slug} / {product.slug}</p>
               </div>
+              {product.price != null && (
+                <span className="text-xs text-[#DAEFFF]/70 tabular-nums">₾{product.price.toLocaleString()}</span>
+              )}
               {product.is_bestseller && (
                 <span className="text-xs bg-[#E4E969]/20 text-[#E4E969] px-2 py-0.5 rounded-full">Bestseller</span>
               )}
@@ -300,6 +320,22 @@ export function ProductManager() {
           <BilInput label="Name" value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} />
           <BilInput label="Tagline" value={form.tagline} onChange={(v) => setForm(f => ({ ...f, tagline: v }))} />
           <BilInput label="Description" value={form.description} onChange={(v) => setForm(f => ({ ...f, description: v }))} />
+
+          <div className="mb-4">
+            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
+              Price <span className="text-[#DAEFFF]/30 normal-case font-normal">(₾ — leave blank to hide)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              inputMode="numeric"
+              value={form.price}
+              onChange={(e) => setForm(f => ({ ...f, price: e.target.value }))}
+              placeholder="e.g. 1200"
+              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>

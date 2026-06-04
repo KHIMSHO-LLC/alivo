@@ -1,5 +1,5 @@
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import type { Locale, Product, SpecGroup } from '@/lib/types'
+import type { Locale, Product, ProductFeature } from '@/lib/types'
 
 interface AllFeaturesProps {
   product: Product
@@ -9,16 +9,11 @@ interface AllFeaturesProps {
 }
 
 export function AllFeatures({ product, lang, dict }: AllFeaturesProps) {
-  // Use grouped specs when available; otherwise fall back to a single group built from the flat feature list.
-  const groups: SpecGroup[] =
+  // Flatten any grouped specs into a single list — each spec shows as a title (left) + value (right).
+  const specs: ProductFeature[] =
     product.specGroups && product.specGroups.length > 0
-      ? product.specGroups
-      : [
-          {
-            title: { en: dict.product.allFeatures, ka: dict.product.allFeatures },
-            items: product.features,
-          },
-        ]
+      ? product.specGroups.flatMap((group) => group.items)
+      : product.features
 
   return (
     <section id="specs" className="bg-white py-24 md:py-32">
@@ -33,37 +28,22 @@ export function AllFeatures({ product, lang, dict }: AllFeaturesProps) {
           />
         </div>
 
-        {/* Grouped specification blocks */}
-        <div className="flex flex-col divide-y divide-[#0C1A23]/10 border-t border-[#0C1A23]/15">
-          {groups.map((group) => (
+        {/* Specification rows — label as title (left), value as description (right) */}
+        <dl className="flex flex-col border-t border-[#0C1A23]/15">
+          {specs.map((feat) => (
             <div
-              key={group.title[lang]}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 py-10"
+              key={feat.label[lang]}
+              className="group grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-12 py-6 border-b border-[#0C1A23]/10 hover:bg-[#FAFFC5]/25 transition-colors"
             >
-              {/* Left: category subtitle */}
-              <div className="lg:col-span-4">
-                <h3 className="text-[#0C1A23] font-bold text-xl tracking-tight">
-                  {group.title[lang]}
-                </h3>
-              </div>
-
-              {/* Right: detailed rows */}
-              <dl className="lg:col-span-8 flex flex-col">
-                {group.items.map((feat) => (
-                  <div
-                    key={feat.label[lang]}
-                    className="group flex items-center justify-between py-4 gap-4 border-b border-[#0C1A23]/8 last:border-b-0 hover:bg-[#FAFFC5]/25 transition-colors"
-                  >
-                    <dt className="text-[#263947] text-sm">{feat.label[lang]}</dt>
-                    <dd className="text-[#0C1A23] font-semibold text-sm text-right tabular-nums">
-                      {feat.value[lang]}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <dt className="text-[#0C1A23] font-bold text-lg tracking-tight">
+                {feat.label[lang]}
+              </dt>
+              <dd className="text-[#263947] text-base sm:text-right tabular-nums">
+                {feat.value[lang]}
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
       </div>
     </section>
   )

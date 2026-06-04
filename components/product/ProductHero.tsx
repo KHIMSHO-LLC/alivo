@@ -41,18 +41,14 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           {/* Left: product info */}
           <div className="lg:col-span-6 flex flex-col gap-7 reveal" style={{ animationDelay: '120ms' }}>
-            {/* Eyebrow + bestseller */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.25em] uppercase text-[#DAEFFF]/70">
-                <span className="w-6 h-px bg-[#DAEFFF]/50" />
-                Fantini Cosmi · {catLabel}
-              </span>
-              {product.isBestseller && (
+            {/* Bestseller badge */}
+            {product.isBestseller && (
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="bg-[#E4E969] text-[#0C1A23] text-[10px] font-bold px-2.5 py-1 rounded-full tracking-[0.15em] uppercase">
                   {p.bestseller}
                 </span>
-              )}
-            </div>
+              </div>
+            )}
 
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#DAEFFF] leading-[0.95] tracking-[-0.02em]">
@@ -64,6 +60,13 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
             </div>
 
             <p className="text-[#DAEFFF]/55 text-[15px] leading-[1.7]">{product.description[lang]}</p>
+
+            {/* Price — directly below the short description */}
+            {typeof product.price === 'number' && (
+              <p className="text-[#DAEFFF] font-black text-3xl md:text-4xl tabular-nums tracking-tight">
+                ₾{product.price.toLocaleString()}
+              </p>
+            )}
 
             {/* Main benefits — bullet list */}
             {product.benefits.length > 0 && (
@@ -83,13 +86,6 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
                   </li>
                 ))}
               </ul>
-            )}
-
-            {/* Price */}
-            {typeof product.price === 'number' && (
-              <p className="text-[#DAEFFF] font-black text-3xl md:text-4xl tabular-nums tracking-tight">
-                ₾{product.price.toLocaleString()}
-              </p>
             )}
 
             {/* CTA row */}

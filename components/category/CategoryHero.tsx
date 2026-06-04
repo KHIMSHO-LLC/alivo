@@ -14,7 +14,7 @@ interface CategoryHeroProps {
 const FALLBACK_HERO =
   'https://images.unsplash.com/photo-1586105251261-72a756497a11?ixlib=rb-4.0.3&auto=format&fit=crop&w=2400&q=80'
 
-export function CategoryHero({ category, lang, productCount, dict }: CategoryHeroProps) {
+export function CategoryHero({ category, lang, dict }: CategoryHeroProps) {
   const heroImage = category.images[0] || FALLBACK_HERO
 
   return (
@@ -34,7 +34,7 @@ export function CategoryHero({ category, lang, productCount, dict }: CategoryHer
 
       {/* Top editorial bar: breadcrumb + meta */}
       <div className="relative max-w-7xl mx-auto px-6 pt-28 w-full">
-        <div className="flex items-center justify-between gap-4 text-[#DAEFFF]/70 text-[11px] font-medium tracking-[0.2em] uppercase">
+        <div className="flex items-center gap-4 text-[#DAEFFF]/70 text-[11px] font-medium tracking-[0.2em] uppercase">
           <nav className="flex items-center gap-2 reveal" style={{ animationDelay: '80ms' }}>
             <Link href={`/${lang}`} className="hover:text-[#DAEFFF] transition-colors">
               Alivo
@@ -42,9 +42,6 @@ export function CategoryHero({ category, lang, productCount, dict }: CategoryHer
             <span className="text-[#DAEFFF]/30">/</span>
             <span className="text-[#DAEFFF]">{category.name[lang]}</span>
           </nav>
-          <span className="hidden sm:inline tabular-nums reveal" style={{ animationDelay: '160ms' }}>
-            {String(productCount ?? 0).padStart(2, '0')} {productCount === 1 ? 'product' : 'products'}
-          </span>
         </div>
       </div>
 
