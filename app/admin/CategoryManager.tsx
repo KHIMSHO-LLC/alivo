@@ -6,6 +6,13 @@ import { supabase as getSupabase } from '@/lib/supabase'
 
 type BilText = { en: string; ka: string }
 
+type StepForm = {
+  step: number
+  title: BilText
+  description: BilText
+  image?: string
+}
+
 type CategoryRow = {
   id: string
   slug: string
@@ -16,8 +23,14 @@ type CategoryRow = {
   images: string[]
   explainer_title: BilText
   explainer_body: BilText
-  how_it_works: unknown
+  how_it_works: StepForm[] | null
 }
+
+const emptyStep = (step: number): StepForm => ({
+  step,
+  title: { en: '', ka: '' },
+  description: { en: '', ka: '' },
+})
 
 const EMPTY_FORM = {
   id: '',
@@ -29,7 +42,7 @@ const EMPTY_FORM = {
   images: [] as string[],
   explainer_title: { en: '', ka: '' },
   explainer_body: { en: '', ka: '' },
-  how_it_works_json: '[{"step": 1, "title": {"en": "", "ka": ""}, "description": {"en": "", "ka": ""}}]',
+  how_it_works: [emptyStep(1)] as StepForm[],
 }
 
 type FormState = typeof EMPTY_FORM
@@ -68,6 +81,7 @@ export function CategoryManager() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [inputKey, setInputKey] = useState(0)
+  const [stepUploading, setStepUploading] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -99,7 +113,12 @@ export function CategoryManager() {
       images: cat.images || [],
       explainer_title: cat.explainer_title,
       explainer_body: cat.explainer_body,
-      how_it_works_json: JSON.stringify(cat.how_it_works ?? [], null, 2),
+      how_it_works: (cat.how_it_works ?? []).map((s, i) => ({
+        step: s.step ?? i + 1,
+        title: s.title ?? { en: '', ka: '' },
+        description: s.description ?? { en: '', ka: '' },
+        image: s.image,
+      })),
     })
     setIsEditing(true)
     setShowForm(true)
@@ -135,6 +154,57 @@ export function CategoryManager() {
     setError('')
   }
 
+  async function uploadImage(file: File): Promise<string | null> {
+    const sb = getSupabase()
+    if (!sb) { setError('Supabase not configured'); return null }
+    if (file.size > 1024 * 1024) { setError('Image must be under 1 MB'); return null }
+    const path = `${Date.now()}_${file.name}`
+    const { data, error: uploadError } = await sb.storage
+      .from('category images')
+      .upload(path, file, { upsert: false })
+    if (uploadError) {
+      setError(`Image upload failed: ${uploadError.message}`)
+      return null
+    }
+    const { data: urlData } = sb.storage.from('category images').getPublicUrl(data.path)
+    return urlData.publicUrl
+  }
+
+  // --- Reason / "How It Works" step editing ---
+  function updateStep(index: number, patch: Partial<StepForm>) {
+    setForm(f => ({
+      ...f,
+      how_it_works: f.how_it_works.map((s, i) => (i === index ? { ...s, ...patch } : s)),
+    }))
+  }
+
+  function addStep() {
+    setForm(f => ({
+      ...f,
+      how_it_works: [...f.how_it_works, emptyStep(f.how_it_works.length + 1)],
+    }))
+  }
+
+  function removeStep(index: number) {
+    setForm(f => ({
+      ...f,
+      how_it_works: f.how_it_works
+        .filter((_, i) => i !== index)
+        .map((s, i) => ({ ...s, step: i + 1 })),
+    }))
+  }
+
+  async function handleStepImage(index: number, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setError('')
+    setStepUploading(index)
+    const url = await uploadImage(file)
+    setStepUploading(null)
+    if (url) updateStep(index, { image: url })
+  }
+
   async function save() {
     const sb = getSupabase()
     if (!sb) { setError('Supabase not configured'); return }
@@ -146,29 +216,17 @@ export function CategoryManager() {
     let images = [...form.images]
 
     if (imageFile) {
-      const path = `${Date.now()}_${imageFile.name}`
-      const { data: uploadData, error: uploadError } = await sb.storage
-        .from('category images')
-        .upload(path, imageFile, { upsert: false })
-
-      if (uploadError) {
-        setError(`Image upload failed: ${uploadError.message}`)
-        setLoading(false)
-        return
-      }
-
-      const { data: urlData } = sb.storage.from('category images').getPublicUrl(uploadData.path)
-      images = [...images, urlData.publicUrl]
+      const url = await uploadImage(imageFile)
+      if (!url) { setLoading(false); return }
+      images = [...images, url]
     }
 
-    let how_it_works: unknown
-    try {
-      how_it_works = JSON.parse(form.how_it_works_json)
-    } catch {
-      setError('How It Works is not valid JSON')
-      setLoading(false)
-      return
-    }
+    const how_it_works = form.how_it_works.map((s, i) => ({
+      step: i + 1,
+      title: s.title,
+      description: s.description,
+      ...(s.image ? { image: s.image } : {}),
+    }))
 
     const record = {
       slug: form.slug,
@@ -320,16 +378,79 @@ export function CategoryManager() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
-              How It Works <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array)</span>
-            </label>
-            <textarea
-              value={form.how_it_works_json}
-              onChange={(e) => setForm(f => ({ ...f, how_it_works_json: e.target.value }))}
-              rows={6}
-              spellCheck={false}
-              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
-            />
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs text-[#DAEFFF]/50 uppercase tracking-wider">
+                Reasons <span className="text-[#DAEFFF]/30 normal-case font-normal">(How It Works steps — each can have its own image)</span>
+              </label>
+              <button
+                type="button"
+                onClick={addStep}
+                className="text-xs bg-[#263947] hover:bg-[#263947]/80 px-3 py-1.5 rounded-lg"
+              >
+                + Add reason
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {form.how_it_works.length === 0 && (
+                <p className="text-[#DAEFFF]/40 text-sm">No reasons yet. Add one.</p>
+              )}
+              {form.how_it_works.map((step, i) => (
+                <div key={i} className="rounded-xl border border-[#263947] bg-[#0C1A23]/40 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold text-[#E4E969] tabular-nums">
+                      Reason {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeStep(i)}
+                      className="text-xs bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-1 rounded-lg"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <BilInput label="Title" value={step.title} onChange={(v) => updateStep(i, { title: v })} />
+                  <BilInput label="Description" value={step.description} onChange={(v) => updateStep(i, { description: v })} />
+
+                  <div>
+                    <label className="block text-xs text-[#DAEFFF]/50 mb-2 uppercase tracking-wider">Image</label>
+                    <div className="flex items-center gap-3">
+                      {step.image ? (
+                        <div className="relative">
+                          <div className="relative w-28 h-20 rounded-lg overflow-hidden border border-[#263947]">
+                            <Image src={step.image} alt={`reason ${i + 1}`} fill className="object-cover" sizes="112px" />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => updateStep(i, { image: undefined })}
+                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center leading-none"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="w-28 h-20 rounded-lg border border-dashed border-[#263947] flex items-center justify-center text-[10px] text-[#DAEFFF]/30 text-center px-2">
+                          Falls back to category image
+                        </div>
+                      )}
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={stepUploading === i}
+                          onChange={(e) => handleStepImage(i, e)}
+                          className="text-sm text-[#DAEFFF]/60 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#263947] file:text-[#DAEFFF] file:text-xs file:cursor-pointer disabled:opacity-50"
+                        />
+                        <p className="text-xs text-[#DAEFFF]/30 mt-1">
+                          {stepUploading === i ? 'Uploading…' : 'Max 1 MB'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {error && <p className="text-red-400 text-sm mb-4">{error}</p>}

@@ -4,6 +4,7 @@
     "categories": "Products",
     "recuperators": "Recuperators",
     "ventilators": "Ventilators",
+    "blog": "Articles",
     "contact": "Contact",
     "about": "About"
   },
@@ -64,6 +65,7 @@
     "products": "Products",
     "company": "Company",
     "contact": "Get in Touch",
+    "whatsapp": "WhatsApp",
     "about": "About Alivo",
     "blog": "Blog",
     "privacy": "Privacy Policy",
@@ -91,6 +93,7 @@
     "title": "Let's talk about your home",
     "subtitle": "Our team will help you choose the right system, prepare a quote and arrange installation. Send us a message or reach out directly.",
     "phone": "Phone",
+    "whatsapp": "WhatsApp",
     "email": "Email",
     "address": "Address",
     "hours": "Working hours",

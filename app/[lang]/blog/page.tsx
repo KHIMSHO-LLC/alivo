@@ -3,7 +3,7 @@ export const unstable_instant = { prefetch: 'static', unstable_disableValidation
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { hasLocale, getDictionary } from '../dictionaries'
-import { BLOG_POSTS } from '@/lib/data/blogs'
+import { getBlogs } from '@/lib/data/supabase-blogs'
 import { BlogCard } from '@/components/ui/BlogCard'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { Locale } from '@/lib/types'
@@ -34,6 +34,7 @@ export default async function BlogIndexPage({ params }: BlogPageProps) {
 
   const dict = await getDictionary(lang as Locale)
   const b = dict.blogs
+  const posts = await getBlogs()
 
   return (
     <div className="bg-[#0C1A23] min-h-[85vh] py-20 px-6">
@@ -45,9 +46,9 @@ export default async function BlogIndexPage({ params }: BlogPageProps) {
           />
         </div>
 
-        {BLOG_POSTS.length > 0 ? (
+        {posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {BLOG_POSTS.map((post) => (
+            {posts.map((post) => (
               <BlogCard
                 key={post.slug}
                 post={post}

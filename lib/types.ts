@@ -54,6 +54,8 @@ export interface HowItWorksStep {
   step: number
   title: BilingualText
   description: BilingualText
+  /** Image shown when this step is the active reason. Falls back to the category image. */
+  image?: string
 }
 
 export interface Review {
@@ -63,6 +65,13 @@ export interface Review {
   body: BilingualText
 }
 
+/** A single piece of blog body content. Rendered in order. */
+export type BlogBlock =
+  | { type: 'heading'; text: BilingualText }
+  | { type: 'paragraph'; text: BilingualText }
+  | { type: 'image'; url: string; caption?: BilingualText }
+  | { type: 'youtube'; url: string }
+
 export interface BlogPost {
   slug: string
   date: string
@@ -70,4 +79,8 @@ export interface BlogPost {
   summary: BilingualText
   category: BilingualText
   placeholderColor: string
+  /** Real cover image URL. Falls back to a generated placeholder when absent. */
+  coverImage?: string
+  /** Structured body content authored from the admin panel. */
+  body?: BlogBlock[]
 }

@@ -23,6 +23,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
   const items: { label: string; value: string; href?: string }[] = [
     { label: c.phone, value: '+995 568 97 01 00', href: 'tel:+995568970100' },
+    { label: c.whatsapp, value: '+995 568 97 01 00', href: 'https://wa.me/995568970100' },
     { label: c.email, value: 'alivogeorgia@gmail.com', href: 'mailto:alivogeorgia@gmail.com' },
     { label: c.address, value: dict.footer.addressLabel },
     { label: c.hours, value: c.hoursValue },
@@ -90,6 +91,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     {item.href ? (
                       <a
                         href={item.href}
+                        {...(item.href.startsWith('http')
+                          ? { target: '_blank', rel: 'noopener noreferrer' }
+                          : {})}
                         className="text-[#DAEFFF] text-base font-semibold border-b border-transparent hover:border-[#DAEFFF]/50 pb-0.5 transition-colors"
                       >
                         {item.value}

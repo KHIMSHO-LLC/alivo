@@ -46,6 +46,7 @@ export function NavbarClient({ lang, dict }: NavbarClientProps) {
     { label: nav.home, href: `/${lang}` },
     { label: nav.recuperators, href: `/${lang}/category/recuperators` },
     { label: nav.ventilators, href: `/${lang}/category/ventilators` },
+    { label: nav.blog, href: `/${lang}/blog` },
     { label: nav.contact, href: `/${lang}/contact` },
   ]
 

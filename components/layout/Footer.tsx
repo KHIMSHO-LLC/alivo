@@ -171,6 +171,19 @@ export function Footer({ lang, dict }: FooterProps) {
               </li>
               <li>
                 <a
+                  href="https://wa.me/995568970100"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[#DAEFFF]/55 hover:text-[#DAEFFF] text-sm transition-colors"
+                >
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10 3.5a6.5 6.5 0 0 0-5.6 9.8L3.5 17l3.8-1A6.5 6.5 0 1 0 10 3.5zm3.5 9.1c-.2.4-.9.8-1.3.9-.4.1-.8.1-1.3-.1-.3-.1-.7-.2-1.2-.5-2.1-.9-3.5-3.1-3.6-3.2-.1-.1-.9-1.2-.9-2.3s.6-1.7.8-1.9c.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .5.4l.7 1.6c.1.2.1.4 0 .5-.1.2-.1.3-.3.4l-.3.4c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.7.6 1.3.8 1.5.9.2.1.3.1.4 0l.7-.8c.1-.2.3-.1.5-.1l1.4.7c.2.1.4.2.4.3.1.1.1.5-.1.9z" />
+                  </svg>
+                  {f.whatsapp}
+                </a>
+              </li>
+              <li>
+                <a
                   href="mailto:alivogeorgia@gmail.com"
                   className="text-[#DAEFFF]/55 hover:text-[#DAEFFF] text-sm transition-colors"
                 >

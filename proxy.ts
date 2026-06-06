@@ -4,13 +4,9 @@ import type { NextRequest } from 'next/server'
 const LOCALES = ['en', 'ka'] as const
 type Locale = (typeof LOCALES)[number]
 
-function getPreferredLocale(request: NextRequest): Locale {
-  const acceptLanguage = request.headers.get('accept-language') ?? ''
-  // Parse the first preferred language tag
-  const primaryTag = acceptLanguage.split(',')[0]?.split(';')[0]?.trim().toLowerCase() ?? ''
-  if (primaryTag.startsWith('ka')) return 'ka'
-  return 'en'
-}
+// Georgian is the default language for everyone entering the site.
+// English visitors switch to it themselves via the language switcher.
+const DEFAULT_LOCALE: Locale = 'ka'
 
 function getLocaleFromPathname(pathname: string): Locale | null {
   for (const locale of LOCALES) {
@@ -29,10 +25,9 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Redirect to locale-prefixed URL
-  const locale = getPreferredLocale(request)
+  // Redirect to locale-prefixed URL (Georgian by default)
   const url = request.nextUrl.clone()
-  url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
+  url.pathname = `/${DEFAULT_LOCALE}${pathname === '/' ? '' : pathname}`
   return NextResponse.redirect(url)
 }
 

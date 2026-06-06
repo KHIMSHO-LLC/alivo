@@ -2,11 +2,13 @@ export const unstable_instant = { prefetch: 'static', unstable_disableValidation
 
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { hasLocale, getDictionary } from '../../dictionaries'
-import { BLOG_POSTS } from '@/lib/data/blogs'
+import { getBlogs, getBlogBySlug } from '@/lib/data/supabase-blogs'
 import { BlogCard } from '@/components/ui/BlogCard'
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage'
+import { YouTubeEmbed } from '@/components/ui/YouTubeEmbed'
 import type { Locale } from '@/lib/types'
 
 interface BlogPostPageProps {
@@ -14,7 +16,8 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-  return BLOG_POSTS.flatMap((post) =>
+  const posts = await getBlogs()
+  return posts.flatMap((post) =>
     ['en', 'ka'].map((lang) => ({
       lang,
       slug: post.slug,
@@ -24,7 +27,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { lang, slug } = await params
-  const post = BLOG_POSTS.find((p) => p.slug === slug)
+  const post = await getBlogBySlug(slug)
   if (!post) return {}
   return {
     title: `${post.title[lang as Locale]} — Alivo`,
@@ -185,15 +188,20 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
 
   if (!hasLocale(lang)) notFound()
 
-  const post = BLOG_POSTS.find((p) => p.slug === slug)
+  const post = await getBlogBySlug(slug)
   if (!post) notFound()
 
   const dict = await getDictionary(lang as Locale)
   const b = dict.blogs
-  const content = BLOG_CONTENTS[slug]?.[lang as Locale] || []
+  const locale = lang as Locale
+
+  // Admin-authored posts carry structured `body` blocks. The original seed posts
+  // fall back to the rich, hand-written section content below.
+  const blocks = post.body ?? []
+  const legacyContent = blocks.length === 0 ? BLOG_CONTENTS[slug]?.[locale] || [] : []
 
   // Get similar articles (excluding this one)
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2)
+  const relatedPosts = (await getBlogs()).filter((p) => p.slug !== slug).slice(0, 2)
 
   const dateFormatted = new Date(post.date).toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-GB', {
     day: 'numeric',
@@ -235,20 +243,76 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
           </p>
         </div>
 
-        {/* Feature Image Placeholder */}
+        {/* Feature / cover image */}
         <div className="relative rounded-3xl overflow-hidden border border-[#DAEFFF]/15 mb-14">
-          <PlaceholderImage
-            color={post.placeholderColor}
-            accentColor="#DAEFFF"
-            aspectRatio="21/9"
-            className="w-full h-full"
-            pattern="grid"
-          />
+          {post.coverImage ? (
+            <div className="relative w-full aspect-[21/9]">
+              <Image
+                src={post.coverImage}
+                alt={post.title[locale]}
+                fill
+                sizes="(max-width: 1024px) 100vw, 896px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          ) : (
+            <PlaceholderImage
+              color={post.placeholderColor}
+              accentColor="#DAEFFF"
+              aspectRatio="21/9"
+              className="w-full h-full"
+              pattern="grid"
+            />
+          )}
         </div>
 
         {/* Article Body */}
-        <div className="max-w-3xl mx-auto flex flex-col gap-10 text-[#DAEFFF]/85 text-base sm:text-lg leading-relaxed">
-          {content.map((sec, idx) => (
+        <div className="max-w-3xl mx-auto flex flex-col gap-8 text-[#DAEFFF]/85 text-base sm:text-lg leading-relaxed">
+          {/* Admin-authored content blocks */}
+          {blocks.map((block, idx) => {
+            switch (block.type) {
+              case 'heading':
+                return (
+                  <h2 key={idx} className="text-[#DAEFFF] text-xl sm:text-2xl font-bold tracking-tight mt-2">
+                    {block.text[locale]}
+                  </h2>
+                )
+              case 'paragraph':
+                return (
+                  <p key={idx} className="whitespace-pre-line">
+                    {block.text[locale]}
+                  </p>
+                )
+              case 'image':
+                return (
+                  <figure key={idx} className="flex flex-col gap-2">
+                    <div className="relative w-full overflow-hidden rounded-2xl border border-[#DAEFFF]/15">
+                      <Image
+                        src={block.url}
+                        alt={block.caption?.[locale] ?? post.title[locale]}
+                        width={1280}
+                        height={720}
+                        sizes="(max-width: 1024px) 100vw, 768px"
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                    {block.caption?.[locale] && (
+                      <figcaption className="text-[#DAEFFF]/45 text-sm text-center">
+                        {block.caption[locale]}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              case 'youtube':
+                return <YouTubeEmbed key={idx} url={block.url} />
+              default:
+                return null
+            }
+          })}
+
+          {/* Legacy seed-post content */}
+          {legacyContent.map((sec, idx) => (
             <section key={idx} className="flex flex-col gap-4">
               <h2 className="text-[#DAEFFF] text-xl sm:text-2xl font-bold tracking-tight">
                 {sec.title}

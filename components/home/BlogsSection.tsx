@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { BlogCard } from '@/components/ui/BlogCard'
-import { BLOG_POSTS } from '@/lib/data/blogs'
+import { getBlogs } from '@/lib/data/supabase-blogs'
 import type { Locale } from '@/lib/types'
 
 interface BlogsSectionProps {
@@ -10,8 +10,11 @@ interface BlogsSectionProps {
   lang: Locale
 }
 
-export function BlogsSection({ dict, lang }: BlogsSectionProps) {
+export async function BlogsSection({ dict, lang }: BlogsSectionProps) {
   const b = dict.blogs
+  const posts = (await getBlogs()).slice(0, 3)
+
+  if (posts.length === 0) return null
 
   return (
     <section className="bg-[#0C1A23] py-24">
@@ -33,7 +36,7 @@ export function BlogsSection({ dict, lang }: BlogsSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {BLOG_POSTS.map((post) => (
+          {posts.map((post) => (
             <BlogCard
               key={post.slug}
               post={post}

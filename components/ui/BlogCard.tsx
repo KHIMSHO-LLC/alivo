@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { PlaceholderImage } from './PlaceholderImage'
 import type { BlogPost, Locale } from '@/lib/types'
 
@@ -23,13 +24,25 @@ export function BlogCard({ post, lang, readMoreLabel = 'Read Article' }: BlogCar
       href={`/${lang}/blog/${post.slug}`}
       className="group flex flex-col bg-[#DAEFFF]/[0.04] hover:bg-[#DAEFFF]/[0.08] border border-[#DAEFFF]/15 hover:border-[#DAEFFF]/40 rounded-2xl overflow-hidden transition-all duration-300"
     >
-      <PlaceholderImage
-        color={post.placeholderColor}
-        accentColor="#DAEFFF"
-        aspectRatio="16/9"
-        className="rounded-none"
-        pattern="grid"
-      />
+      {post.coverImage ? (
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src={post.coverImage}
+            alt={post.title[lang]}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <PlaceholderImage
+          color={post.placeholderColor}
+          accentColor="#DAEFFF"
+          aspectRatio="16/9"
+          className="rounded-none"
+          pattern="grid"
+        />
+      )}
       <div className="p-5 flex flex-col gap-2 flex-1">
         <div className="flex items-center gap-2">
           <span className="text-[#DAEFFF] text-xs font-semibold tracking-wider uppercase">
