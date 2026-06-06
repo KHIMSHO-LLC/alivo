@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductHero product={product} lang={lang as Locale} dict={dict} />
       <KeyBenefits product={product} lang={lang as Locale} dict={dict} />
       <AllFeatures product={product} lang={lang as Locale} dict={dict} />
-      <ProductFaq product={product} lang={lang as Locale} dict={dict} />
+      <ProductFaq faqs={product.faqs ?? []} lang={lang as Locale} heading={dict.product.faq} />
       <AboutFantiniSection dict={dict} />
     </>
   )
