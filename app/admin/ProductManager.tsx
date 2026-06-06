@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase as getSupabase } from '@/lib/supabase'
 
@@ -18,6 +18,7 @@ type ProductRow = {
   images: string[]
   benefits: unknown
   features: unknown
+  faqs: unknown
   price: number | null
 }
 
@@ -36,6 +37,7 @@ const EMPTY_FORM = {
   images: [] as string[],
   benefits_json: '[{"icon": "🌬️", "title": {"en": "", "ka": ""}, "body": {"en": "", "ka": ""}}]',
   features_json: '[{"label": {"en": "", "ka": ""}, "value": {"en": "", "ka": ""}}]',
+  faqs_json: '[{"question": {"en": "", "ka": ""}, "answer": {"en": "", "ka": ""}}]',
 }
 
 type FormState = typeof EMPTY_FORM
@@ -78,24 +80,24 @@ export function ProductManager() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchProducts()
-    fetchCategories()
-  }, [])
-
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     const sb = getSupabase()
     if (!sb) return
     const { data } = await sb.from('products').select('*').order('created_at', { ascending: true })
     if (data) setProducts(data as ProductRow[])
-  }
+  }, [])
 
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     const sb = getSupabase()
     if (!sb) return
     const { data } = await sb.from('categories').select('id, slug, name')
     if (data) setCategoryOptions(data as CategoryOption[])
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchProducts()
+    fetchCategories()
+  }, [fetchProducts, fetchCategories])
 
   function startNew() {
     setForm(EMPTY_FORM)
@@ -119,6 +121,7 @@ export function ProductManager() {
       images: product.images || [],
       benefits_json: JSON.stringify(product.benefits ?? [], null, 2),
       features_json: JSON.stringify(product.features ?? [], null, 2),
+      faqs_json: JSON.stringify(product.faqs ?? [], null, 2),
     })
     setIsEditing(true)
     setShowForm(true)
@@ -166,6 +169,8 @@ export function ProductManager() {
     let images = [...form.images]
 
     if (imageFile) {
+      // save() is a click handler, not render code — Date.now() for a unique upload path is fine here.
+      // eslint-disable-next-line react-hooks/purity
       const path = `${form.category_slug}/${Date.now()}_${imageFile.name}`
       const { data: uploadData, error: uploadError } = await sb.storage
         .from('product images')
@@ -183,11 +188,13 @@ export function ProductManager() {
 
     let benefits: unknown
     let features: unknown
+    let faqs: unknown
     try {
       benefits = JSON.parse(form.benefits_json)
       features = JSON.parse(form.features_json)
+      faqs = JSON.parse(form.faqs_json)
     } catch {
-      setError('Benefits or Features JSON is invalid')
+      setError('Benefits, Features or FAQ JSON is invalid')
       setLoading(false)
       return
     }
@@ -217,6 +224,7 @@ export function ProductManager() {
       images,
       benefits,
       features,
+      faqs,
     }
 
     const { error: dbError } = isEditing && form.id
@@ -416,13 +424,26 @@ export function ProductManager() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
               Features / Specs <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array)</span>
             </label>
             <textarea
               value={form.features_json}
               onChange={(e) => setForm(f => ({ ...f, features_json: e.target.value }))}
+              rows={5}
+              spellCheck={false}
+              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
+              FAQ <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array — leave [] to hide)</span>
+            </label>
+            <textarea
+              value={form.faqs_json}
+              onChange={(e) => setForm(f => ({ ...f, faqs_json: e.target.value }))}
               rows={5}
               spellCheck={false}
               className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"

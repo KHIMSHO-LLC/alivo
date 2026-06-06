@@ -1,4 +1,6 @@
 import type { Locale } from '@/lib/types'
+import { getSiteTextOverrides } from '@/lib/data/supabase-site-text'
+import { applyOverrides } from '@/lib/wordings'
 
 export const LOCALES: Locale[] = ['en', 'ka']
 
@@ -15,5 +17,12 @@ const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
 }
 
 export async function getDictionary(locale: Locale): Promise<Dictionary> {
-  return dictionaries[locale]()
+  const base = await dictionaries[locale]()
+  const overrides = await getSiteTextOverrides()
+  if (overrides.length === 0) return base
+
+  return applyOverrides(
+    base,
+    overrides.map((o) => ({ key: o.key, value: o[locale] ?? '' }))
+  )
 }

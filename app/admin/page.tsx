@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { CategoryManager } from './CategoryManager'
 import { ProductManager } from './ProductManager'
 import { BlogManager } from './BlogManager'
+import { WordingsManager } from './WordingsManager'
 
-type Tab = 'categories' | 'products' | 'blog'
+type Tab = 'categories' | 'products' | 'blog' | 'wordings'
 
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>('categories')
@@ -19,7 +20,7 @@ export default function AdminPage() {
         </div>
 
         <div className="flex gap-2 mb-8 border-b border-[#263947] pb-4">
-          {(['categories', 'products', 'blog'] as const).map((t) => (
+          {(['categories', 'products', 'blog', 'wordings'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -37,6 +38,7 @@ export default function AdminPage() {
         {tab === 'categories' && <CategoryManager />}
         {tab === 'products' && <ProductManager />}
         {tab === 'blog' && <BlogManager />}
+        {tab === 'wordings' && <WordingsManager />}
       </div>
     </div>
   )

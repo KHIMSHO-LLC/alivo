@@ -3,12 +3,12 @@ export const unstable_instant = { prefetch: 'static', unstable_disableValidation
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { hasLocale, getDictionary } from '../../../dictionaries'
-import { getProductBySlug, getSimilarProducts, getProducts } from '@/lib/data/supabase-products'
+import { getProductBySlug, getProducts } from '@/lib/data/supabase-products'
 import { ProductHero } from '@/components/product/ProductHero'
 import { KeyBenefits } from '@/components/product/KeyBenefits'
 import { AllFeatures } from '@/components/product/AllFeatures'
+import { ProductFaq } from '@/components/product/ProductFaq'
 import { AboutFantiniSection } from '@/components/category/AboutFantiniSection'
-import { SimilarProducts } from '@/components/product/SimilarProducts'
 import type { Locale } from '@/lib/types'
 
 interface ProductPageProps {
@@ -49,15 +49,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound()
 
   const dict = await getDictionary(lang as Locale)
-  const similar = await getSimilarProducts(product)
 
   return (
     <>
       <ProductHero product={product} lang={lang as Locale} dict={dict} />
       <KeyBenefits product={product} lang={lang as Locale} dict={dict} />
       <AllFeatures product={product} lang={lang as Locale} dict={dict} />
+      <ProductFaq product={product} lang={lang as Locale} dict={dict} />
       <AboutFantiniSection dict={dict} />
-      <SimilarProducts products={similar} lang={lang as Locale} dict={dict} />
     </>
   )
 }

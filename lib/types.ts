@@ -20,6 +20,13 @@ export interface Product {
   price?: number
   /** Specs grouped into named categories. Falls back to a single group built from `features` when absent. */
   specGroups?: SpecGroup[]
+  /** Frequently asked questions shown on the product page. Empty/absent hides the section. */
+  faqs?: FaqItem[]
+}
+
+export interface FaqItem {
+  question: BilingualText
+  answer: BilingualText
 }
 
 export interface ProductBenefit {

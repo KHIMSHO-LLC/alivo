@@ -29,6 +29,7 @@ type DatabaseProduct = {
   features: any
   price: number | null
   spec_groups: SpecGroup[] | null
+  faqs: any
   created_at: string
 }
 
@@ -60,6 +61,7 @@ function mapProduct(dbProduct: DatabaseProduct): Product {
     features: dbProduct.features,
     price: dbProduct.price ?? undefined,
     specGroups: dbProduct.spec_groups ?? undefined,
+    faqs: dbProduct.faqs ?? [],
   }
 }
 
@@ -187,26 +189,3 @@ export async function getProductBySlug(categorySlug: string, productSlug: string
   }
 }
 
-export async function getSimilarProducts(product: Product, limit = 3): Promise<Product[]> {
-  try {
-    const supabase = getSupabase()
-    if (!supabase) return []
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('category_slug', product.categorySlug)
-      .neq('slug', product.slug)
-      .limit(limit)
-      .order('created_at', { ascending: true })
-
-    if (error) {
-      console.warn('Warning fetching similar products:', error.message)
-      return []
-    }
-
-    return (data || []).map(mapProduct)
-  } catch (err) {
-    console.warn('Error connecting to Supabase')
-    return []
-  }
-}
