@@ -8,7 +8,6 @@ import { ProductHero } from '@/components/product/ProductHero'
 import { KeyBenefits } from '@/components/product/KeyBenefits'
 import { AllFeatures } from '@/components/product/AllFeatures'
 import { ProductFaq } from '@/components/product/ProductFaq'
-import { AboutFantiniSection } from '@/components/category/AboutFantiniSection'
 import type { Locale } from '@/lib/types'
 
 interface ProductPageProps {
@@ -56,7 +55,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <KeyBenefits product={product} lang={lang as Locale} dict={dict} />
       <AllFeatures product={product} lang={lang as Locale} dict={dict} />
       <ProductFaq faqs={product.faqs ?? []} lang={lang as Locale} heading={dict.product.faq} />
-      <AboutFantiniSection dict={dict} />
     </>
   )
 }
