@@ -16,7 +16,7 @@ export function ProductCard({
   bestsellersLabel = 'Bestseller',
   learnMoreLabel = 'View product',
 }: ProductCardProps) {
-  const quickSpec = product.features[0]
+  const quickSpec = product.features?.[0]
 
   return (
     <Link
@@ -57,9 +57,9 @@ export function ProductCard({
         {quickSpec && (
           <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[#DAEFFF] text-[11px] font-semibold tracking-wide opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
             <span className="text-[#DAEFFF]/60 uppercase tracking-[0.2em] text-[10px]">
-              {quickSpec.label[lang]}
+              {quickSpec.label?.[lang]}
             </span>
-            <span className="tabular-nums">{quickSpec.value[lang]}</span>
+            <span className="tabular-nums">{quickSpec.value?.[lang]}</span>
           </div>
         )}
       </div>

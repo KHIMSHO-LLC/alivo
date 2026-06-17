@@ -1,5 +1,36 @@
 import { supabase as getSupabase } from '@/lib/supabase'
-import type { Category, Product, SpecGroup } from '@/lib/types'
+import type { Category, FaqItem, Product, ProductBenefit, ProductFeature, SpecGroup } from '@/lib/types'
+
+function normalizeFeatures(raw: unknown): ProductFeature[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((f) => f && typeof f === 'object')
+    .map((f) => ({
+      label: { en: f.label?.en ?? f.title?.en ?? '', ka: f.label?.ka ?? f.title?.ka ?? '' },
+      value: { en: f.value?.en ?? '', ka: f.value?.ka ?? '' },
+    }))
+}
+
+function normalizeBenefits(raw: unknown): ProductBenefit[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((b) => b && typeof b === 'object')
+    .map((b) => ({
+      icon: typeof b.icon === 'string' ? b.icon : '',
+      title: { en: b.title?.en ?? '', ka: b.title?.ka ?? '' },
+      body: { en: b.body?.en ?? '', ka: b.body?.ka ?? '' },
+    }))
+}
+
+function normalizeFaqs(raw: unknown): FaqItem[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((f) => f && typeof f === 'object')
+    .map((f) => ({
+      question: { en: f.question?.en ?? '', ka: f.question?.ka ?? '' },
+      answer: { en: f.answer?.en ?? '', ka: f.answer?.ka ?? '' },
+    }))
+}
 
 type DatabaseCategory = {
   id: string
@@ -57,11 +88,11 @@ function mapProduct(dbProduct: DatabaseProduct): Product {
     isBestseller: dbProduct.is_bestseller,
     placeholderColor: dbProduct.placeholder_color,
     images: dbProduct.images || [],
-    benefits: dbProduct.benefits,
-    features: dbProduct.features,
+    benefits: normalizeBenefits(dbProduct.benefits),
+    features: normalizeFeatures(dbProduct.features),
     price: dbProduct.price ?? undefined,
     specGroups: dbProduct.spec_groups ?? undefined,
-    faqs: dbProduct.faqs ?? [],
+    faqs: normalizeFaqs(dbProduct.faqs),
   }
 }
 

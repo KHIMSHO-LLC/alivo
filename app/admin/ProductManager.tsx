@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase as getSupabase } from '@/lib/supabase'
+import type { ProductBenefit, ProductFeature, FaqItem } from '@/lib/types'
 
 type BilText = { en: string; ka: string }
 
@@ -24,6 +25,10 @@ type ProductRow = {
 
 type CategoryOption = { id: string; slug: string; name: BilText }
 
+const EMPTY_BENEFIT: ProductBenefit = { icon: '', title: { en: '', ka: '' }, body: { en: '', ka: '' } }
+const EMPTY_FEATURE: ProductFeature = { label: { en: '', ka: '' }, value: { en: '', ka: '' } }
+const EMPTY_FAQ: FaqItem = { question: { en: '', ka: '' }, answer: { en: '', ka: '' } }
+
 const EMPTY_FORM = {
   id: '',
   slug: '',
@@ -35,37 +40,187 @@ const EMPTY_FORM = {
   placeholder_color: '#263947',
   price: '' as string,
   images: [] as string[],
-  benefits_json: '[{"icon": "🌬️", "title": {"en": "", "ka": ""}, "body": {"en": "", "ka": ""}}]',
-  features_json: '[{"label": {"en": "", "ka": ""}, "value": {"en": "", "ka": ""}}]',
-  faqs_json: '[{"question": {"en": "", "ka": ""}, "answer": {"en": "", "ka": ""}}]',
+  benefits: [{ ...EMPTY_BENEFIT }] as ProductBenefit[],
+  features: [{ ...EMPTY_FEATURE }] as ProductFeature[],
+  faqs: [] as FaqItem[],
 }
 
 type FormState = typeof EMPTY_FORM
 
+const inputCls = 'w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]'
+const textareaCls = `${inputCls} resize-y`
+const labelCls = 'block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider'
+const subLabelCls = 'text-xs text-[#DAEFFF]/40 mb-1 block'
+const cardCls = 'mb-3 p-4 bg-[#0C1A23]/40 rounded-xl border border-[#263947]/60'
+
 function BilInput({ label, value, onChange }: { label: string; value: BilText; onChange: (v: BilText) => void }) {
   return (
     <div className="mb-4">
-      <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">{label}</label>
+      <label className={labelCls}>{label}</label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <span className="text-xs text-[#DAEFFF]/40 mb-1 block">English</span>
-          <input
-            value={value.en}
-            onChange={(e) => onChange({ ...value, en: e.target.value })}
-            className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
-          />
+          <span className={subLabelCls}>English</span>
+          <input value={value.en} onChange={(e) => onChange({ ...value, en: e.target.value })} className={inputCls} />
         </div>
         <div>
-          <span className="text-xs text-[#DAEFFF]/40 mb-1 block">Georgian</span>
-          <input
-            value={value.ka}
-            onChange={(e) => onChange({ ...value, ka: e.target.value })}
-            className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
-          />
+          <span className={subLabelCls}>Georgian</span>
+          <input value={value.ka} onChange={(e) => onChange({ ...value, ka: e.target.value })} className={inputCls} />
         </div>
       </div>
     </div>
   )
+}
+
+function BilTextarea({ label, value, onChange, rows = 3 }: { label: string; value: BilText; onChange: (v: BilText) => void; rows?: number }) {
+  return (
+    <div>
+      <label className={subLabelCls}>{label}</label>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <span className={subLabelCls}>EN</span>
+          <textarea rows={rows} value={value.en} onChange={(e) => onChange({ ...value, en: e.target.value })} className={textareaCls} />
+        </div>
+        <div>
+          <span className={subLabelCls}>KA</span>
+          <textarea rows={rows} value={value.ka} onChange={(e) => onChange({ ...value, ka: e.target.value })} className={textareaCls} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BenefitsEditor({ items, onChange }: { items: ProductBenefit[]; onChange: (v: ProductBenefit[]) => void }) {
+  function add() { onChange([...items, { ...EMPTY_BENEFIT }]) }
+  function remove(i: number) { onChange(items.filter((_, idx) => idx !== i)) }
+  function update(i: number, updated: ProductBenefit) { onChange(items.map((item, idx) => idx === i ? updated : item)) }
+
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className={cardCls}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-[#DAEFFF]/50">Benefit {i + 1}</span>
+            <button type="button" onClick={() => remove(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+          </div>
+          <div className="mb-2">
+            <span className={subLabelCls}>Icon (emoji)</span>
+            <input
+              value={item.icon}
+              onChange={(e) => update(i, { ...item, icon: e.target.value })}
+              placeholder="e.g. 🌬️"
+              className={inputCls}
+            />
+          </div>
+          <div className="mb-2">
+            <BilInput label="Title" value={item.title} onChange={(v) => update(i, { ...item, title: v })} />
+          </div>
+          <BilTextarea label="Body" value={item.body} onChange={(v) => update(i, { ...item, body: v })} />
+        </div>
+      ))}
+      <button type="button" onClick={add} className="text-xs text-[#E4E969] hover:text-[#FAFFC5] font-semibold">
+        + Add Benefit
+      </button>
+    </div>
+  )
+}
+
+function FeaturesEditor({ items, onChange }: { items: ProductFeature[]; onChange: (v: ProductFeature[]) => void }) {
+  function add() { onChange([...items, { ...EMPTY_FEATURE }]) }
+  function remove(i: number) { onChange(items.filter((_, idx) => idx !== i)) }
+  function update(i: number, updated: ProductFeature) { onChange(items.map((item, idx) => idx === i ? updated : item)) }
+
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className={cardCls}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-[#DAEFFF]/50">Spec {i + 1}</span>
+            <button type="button" onClick={() => remove(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+          </div>
+          <div className="mb-2">
+            <BilInput label="Label" value={item.label} onChange={(v) => update(i, { ...item, label: v })} />
+          </div>
+          <div>
+            <span className={subLabelCls}>Value — use new lines for multiple sub-values</span>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <span className={subLabelCls}>EN</span>
+                <textarea
+                  rows={3}
+                  value={item.value.en}
+                  onChange={(e) => update(i, { ...item, value: { ...item.value, en: e.target.value } })}
+                  className={textareaCls}
+                />
+              </div>
+              <div>
+                <span className={subLabelCls}>KA</span>
+                <textarea
+                  rows={3}
+                  value={item.value.ka}
+                  onChange={(e) => update(i, { ...item, value: { ...item.value, ka: e.target.value } })}
+                  className={textareaCls}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      <button type="button" onClick={add} className="text-xs text-[#E4E969] hover:text-[#FAFFC5] font-semibold">
+        + Add Spec
+      </button>
+    </div>
+  )
+}
+
+function FaqEditor({ items, onChange }: { items: FaqItem[]; onChange: (v: FaqItem[]) => void }) {
+  function add() { onChange([...items, { ...EMPTY_FAQ }]) }
+  function remove(i: number) { onChange(items.filter((_, idx) => idx !== i)) }
+  function update(i: number, updated: FaqItem) { onChange(items.map((item, idx) => idx === i ? updated : item)) }
+
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className={cardCls}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-[#DAEFFF]/50">FAQ {i + 1}</span>
+            <button type="button" onClick={() => remove(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+          </div>
+          <div className="mb-2">
+            <BilInput label="Question" value={item.question} onChange={(v) => update(i, { ...item, question: v })} />
+          </div>
+          <BilTextarea label="Answer" value={item.answer} onChange={(v) => update(i, { ...item, answer: v })} rows={4} />
+        </div>
+      ))}
+      <button type="button" onClick={add} className="text-xs text-[#E4E969] hover:text-[#FAFFC5] font-semibold">
+        + Add FAQ
+      </button>
+    </div>
+  )
+}
+
+function parseBenefits(raw: unknown): ProductBenefit[] {
+  if (!Array.isArray(raw)) return [{ ...EMPTY_BENEFIT }]
+  return raw.map((b) => ({
+    icon: typeof b?.icon === 'string' ? b.icon : '',
+    title: { en: b?.title?.en ?? '', ka: b?.title?.ka ?? '' },
+    body: { en: b?.body?.en ?? '', ka: b?.body?.ka ?? '' },
+  }))
+}
+
+function parseFeatures(raw: unknown): ProductFeature[] {
+  if (!Array.isArray(raw)) return [{ ...EMPTY_FEATURE }]
+  return raw.map((f) => ({
+    label: { en: f?.label?.en ?? '', ka: f?.label?.ka ?? '' },
+    value: { en: f?.value?.en ?? '', ka: f?.value?.ka ?? '' },
+  }))
+}
+
+function parseFaqs(raw: unknown): FaqItem[] {
+  if (!Array.isArray(raw)) return []
+  return raw.map((f) => ({
+    question: { en: f?.question?.en ?? '', ka: f?.question?.ka ?? '' },
+    answer: { en: f?.answer?.en ?? '', ka: f?.answer?.ka ?? '' },
+  }))
 }
 
 export function ProductManager() {
@@ -119,9 +274,9 @@ export function ProductManager() {
       placeholder_color: product.placeholder_color,
       price: product.price != null ? String(product.price) : '',
       images: product.images || [],
-      benefits_json: JSON.stringify(product.benefits ?? [], null, 2),
-      features_json: JSON.stringify(product.features ?? [], null, 2),
-      faqs_json: JSON.stringify(product.faqs ?? [], null, 2),
+      benefits: parseBenefits(product.benefits),
+      features: parseFeatures(product.features),
+      faqs: parseFaqs(product.faqs),
     })
     setIsEditing(true)
     setShowForm(true)
@@ -169,7 +324,6 @@ export function ProductManager() {
     let images = [...form.images]
 
     if (imageFile) {
-      // save() is a click handler, not render code — Date.now() for a unique upload path is fine here.
       // eslint-disable-next-line react-hooks/purity
       const path = `${form.category_slug}/${Date.now()}_${imageFile.name}`
       const { data: uploadData, error: uploadError } = await sb.storage
@@ -186,20 +340,6 @@ export function ProductManager() {
       images = [...images, urlData.publicUrl]
     }
 
-    let benefits: unknown
-    let features: unknown
-    let faqs: unknown
-    try {
-      benefits = JSON.parse(form.benefits_json)
-      features = JSON.parse(form.features_json)
-      faqs = JSON.parse(form.faqs_json)
-    } catch {
-      setError('Benefits, Features or FAQ JSON is invalid')
-      setLoading(false)
-      return
-    }
-
-    // Price is optional; empty clears it, otherwise must be a non-negative number.
     const trimmedPrice = form.price.trim()
     let price: number | null = null
     if (trimmedPrice !== '') {
@@ -222,9 +362,9 @@ export function ProductManager() {
       placeholder_color: form.placeholder_color,
       price,
       images,
-      benefits,
-      features,
-      faqs,
+      benefits: form.benefits,
+      features: form.features,
+      faqs: form.faqs,
     }
 
     const { error: dbError } = isEditing && form.id
@@ -302,20 +442,20 @@ export function ProductManager() {
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">Slug</label>
+              <label className={labelCls}>Slug</label>
               <input
                 value={form.slug}
                 onChange={(e) => setForm(f => ({ ...f, slug: e.target.value }))}
                 placeholder="e.g. reco-101"
-                className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">Category</label>
+              <label className={labelCls}>Category</label>
               <select
                 value={form.category_slug}
                 onChange={(e) => setForm(f => ({ ...f, category_slug: e.target.value }))}
-                className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+                className={inputCls}
               >
                 <option value="">Select category...</option>
                 {categoryOptions.map((c) => (
@@ -330,7 +470,7 @@ export function ProductManager() {
           <BilInput label="Description" value={form.description} onChange={(v) => setForm(f => ({ ...f, description: v }))} />
 
           <div className="mb-4">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
+            <label className={labelCls}>
               Price <span className="text-[#DAEFFF]/30 normal-case font-normal">(₾ — leave blank to hide)</span>
             </label>
             <input
@@ -341,13 +481,13 @@ export function ProductManager() {
               value={form.price}
               onChange={(e) => setForm(f => ({ ...f, price: e.target.value }))}
               placeholder="e.g. 1200"
-              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-sm text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+              className={inputCls}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">Placeholder Color</label>
+              <label className={labelCls}>Placeholder Color</label>
               <div className="flex items-center gap-3">
                 <input
                   type="color"
@@ -371,7 +511,7 @@ export function ProductManager() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-2 uppercase tracking-wider">Images</label>
+            <label className={`${labelCls} mb-2`}>Images</label>
             {form.images.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {form.images.map((url) => (
@@ -411,42 +551,32 @@ export function ProductManager() {
             <p className="text-xs text-[#DAEFFF]/30 mt-1">Max 1 MB</p>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
-              Benefits <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array)</span>
-            </label>
-            <textarea
-              value={form.benefits_json}
-              onChange={(e) => setForm(f => ({ ...f, benefits_json: e.target.value }))}
-              rows={5}
-              spellCheck={false}
-              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
-              Features / Specs <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array)</span>
-            </label>
-            <textarea
-              value={form.features_json}
-              onChange={(e) => setForm(f => ({ ...f, features_json: e.target.value }))}
-              rows={5}
-              spellCheck={false}
-              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
-            />
-          </div>
-
+          {/* Benefits */}
           <div className="mb-6">
-            <label className="block text-xs text-[#DAEFFF]/50 mb-1 uppercase tracking-wider">
-              FAQ <span className="text-[#DAEFFF]/30 normal-case font-normal">(JSON array — leave [] to hide)</span>
+            <label className={`${labelCls} mb-3`}>Benefits</label>
+            <BenefitsEditor
+              items={form.benefits}
+              onChange={(v) => setForm(f => ({ ...f, benefits: v }))}
+            />
+          </div>
+
+          {/* Features / Specs */}
+          <div className="mb-6">
+            <label className={`${labelCls} mb-3`}>Features / Specs</label>
+            <FeaturesEditor
+              items={form.features}
+              onChange={(v) => setForm(f => ({ ...f, features: v }))}
+            />
+          </div>
+
+          {/* FAQ */}
+          <div className="mb-6">
+            <label className={`${labelCls} mb-3`}>
+              FAQ <span className="text-[#DAEFFF]/30 normal-case font-normal">(leave empty to hide section)</span>
             </label>
-            <textarea
-              value={form.faqs_json}
-              onChange={(e) => setForm(f => ({ ...f, faqs_json: e.target.value }))}
-              rows={5}
-              spellCheck={false}
-              className="w-full bg-[#263947] border border-[#263947]/50 rounded-lg px-3 py-2 text-xs font-mono text-[#DAEFFF] focus:outline-none focus:border-[#E4E969]"
+            <FaqEditor
+              items={form.faqs}
+              onChange={(v) => setForm(f => ({ ...f, faqs: v }))}
             />
           </div>
 

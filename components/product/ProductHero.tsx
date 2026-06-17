@@ -51,22 +51,15 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
             )}
 
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#DAEFFF] leading-[0.95] tracking-[-0.02em]">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#DAEFFF] leading-[0.95] tracking-[-0.02em]">
                 {product.name[lang]}
               </h1>
-              <p className="text-[#DAEFFF]/75 text-lg font-light leading-relaxed mt-4 max-w-md">
+              <p className="text-[#E4E969] text-base font-light leading-relaxed mt-4 max-w-md">
                 {product.tagline[lang]}
               </p>
             </div>
 
             <p className="text-[#DAEFFF]/55 text-[15px] leading-[1.7]">{product.description[lang]}</p>
-
-            {/* Price — directly below the short description */}
-            {typeof product.price === 'number' && (
-              <p className="text-[#DAEFFF] font-black text-3xl md:text-4xl tabular-nums tracking-tight">
-                ₾{product.price.toLocaleString()}
-              </p>
-            )}
 
             {/* Main benefits — bullet list */}
             {product.benefits.length > 0 && (
@@ -86,6 +79,13 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
                   </li>
                 ))}
               </ul>
+            )}
+
+            {/* Price — below bullet list */}
+            {typeof product.price === 'number' && (
+              <p className="text-[#DAEFFF] font-black text-3xl md:text-4xl tabular-nums tracking-tight">
+                ₾{product.price.toLocaleString()}
+              </p>
             )}
 
             {/* CTA row */}
