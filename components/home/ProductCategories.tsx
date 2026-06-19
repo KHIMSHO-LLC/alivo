@@ -58,13 +58,13 @@ export async function ProductCategories({ dict, lang }: ProductCategoriesProps) 
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-[#DAEFFF] text-xs font-semibold tracking-widest uppercase mb-2">
-                      {cat.name[lang]}
+                      {c[cat.slug]?.title ?? cat.name[lang]}
                     </p>
                     <h3 className="text-[#DAEFFF] text-2xl md:text-3xl font-black leading-tight">
                       {cat.heroTagline[lang]}
                     </h3>
                     <p className="text-[#DAEFFF]/70 text-sm mt-2 max-w-sm">
-                      {cat.description[lang]}
+                      {c[cat.slug]?.description ?? cat.description[lang]}
                     </p>
                   </div>
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#E4E969] group-hover:bg-[#FAFFC5] flex items-center justify-center transition-all duration-300 group-hover:translate-x-1">
