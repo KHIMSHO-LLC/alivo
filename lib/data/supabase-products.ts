@@ -1,5 +1,5 @@
 import { supabase as getSupabase } from '@/lib/supabase'
-import type { Category, FaqItem, Product, ProductBenefit, ProductFeature, SpecGroup } from '@/lib/types'
+import type { BilingualText, Category, FaqItem, Product, ProductBenefit, ProductFeature, SpecGroup } from '@/lib/types'
 
 function normalizeFeatures(raw: unknown): ProductFeature[] {
   if (!Array.isArray(raw)) return []
@@ -20,6 +20,13 @@ function normalizeBenefits(raw: unknown): ProductBenefit[] {
       title: { en: b.title?.en ?? '', ka: b.title?.ka ?? '' },
       body: { en: b.body?.en ?? '', ka: b.body?.ka ?? '' },
     }))
+}
+
+function normalizeHeroBullets(raw: unknown): BilingualText[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((b) => b && typeof b === 'object')
+    .map((b) => ({ en: b.en ?? '', ka: b.ka ?? '' }))
 }
 
 function normalizeFaqs(raw: unknown): FaqItem[] {
@@ -56,6 +63,7 @@ type DatabaseProduct = {
   is_bestseller: boolean
   placeholder_color: string
   images: string[]
+  hero_bullets: any
   benefits: any
   features: any
   price: number | null
@@ -88,6 +96,7 @@ function mapProduct(dbProduct: DatabaseProduct): Product {
     isBestseller: dbProduct.is_bestseller,
     placeholderColor: dbProduct.placeholder_color,
     images: dbProduct.images || [],
+    heroBullets: normalizeHeroBullets(dbProduct.hero_bullets),
     benefits: normalizeBenefits(dbProduct.benefits),
     features: normalizeFeatures(dbProduct.features),
     price: dbProduct.price ?? undefined,

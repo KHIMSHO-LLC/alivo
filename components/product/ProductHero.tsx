@@ -61,25 +61,31 @@ export function ProductHero({ product, lang, dict }: ProductHeroProps) {
 
             <p className="text-[#DAEFFF]/55 text-[15px] leading-[1.7]">{product.description[lang]}</p>
 
-            {/* Main benefits — bullet list */}
-            {product.benefits.length > 0 && (
-              <ul className="flex flex-col gap-3">
-                {product.benefits.map((benefit) => (
-                  <li key={benefit.title[lang]} className="flex items-start gap-3">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      className="mt-0.5 flex-shrink-0 text-[#E4E969]"
-                    >
-                      <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="text-[#DAEFFF]/85 text-[15px] leading-snug">{benefit.title[lang]}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            {/* Hero bullet list — uses heroBullets when set, falls back to benefit titles */}
+            {(() => {
+              const bullets =
+                product.heroBullets && product.heroBullets.length > 0
+                  ? product.heroBullets
+                  : product.benefits.map((b) => b.title)
+              return bullets.length > 0 ? (
+                <ul className="flex flex-col gap-3">
+                  {bullets.map((bullet, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        className="mt-0.5 flex-shrink-0 text-[#E4E969]"
+                      >
+                        <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="text-[#DAEFFF]/85 text-[15px] leading-snug">{bullet[lang]}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null
+            })()}
 
             {/* Price — below bullet list */}
             {typeof product.price === 'number' && (

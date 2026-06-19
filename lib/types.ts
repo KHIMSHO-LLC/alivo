@@ -14,6 +14,8 @@ export interface Product {
   isBestseller: boolean
   placeholderColor: string
   images: string[]
+  /** Short bullet points shown in the hero section. Falls back to benefit titles when empty. */
+  heroBullets?: BilingualText[]
   benefits: ProductBenefit[]
   features: ProductFeature[]
   /** Price in Georgian lari (₾). Optional — hidden in UI when absent. */

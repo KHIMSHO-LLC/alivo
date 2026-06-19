@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase as getSupabase } from '@/lib/supabase'
-import type { ProductBenefit, ProductFeature, FaqItem } from '@/lib/types'
+import type { BilingualText, ProductBenefit, ProductFeature, FaqItem } from '@/lib/types'
 
 type BilText = { en: string; ka: string }
 
@@ -17,6 +17,7 @@ type ProductRow = {
   is_bestseller: boolean
   placeholder_color: string
   images: string[]
+  hero_bullets: unknown
   benefits: unknown
   features: unknown
   faqs: unknown
@@ -25,6 +26,7 @@ type ProductRow = {
 
 type CategoryOption = { id: string; slug: string; name: BilText }
 
+const EMPTY_HERO_BULLET: BilingualText = { en: '', ka: '' }
 const EMPTY_BENEFIT: ProductBenefit = { icon: '', title: { en: '', ka: '' }, body: { en: '', ka: '' } }
 const EMPTY_FEATURE: ProductFeature = { label: { en: '', ka: '' }, value: { en: '', ka: '' } }
 const EMPTY_FAQ: FaqItem = { question: { en: '', ka: '' }, answer: { en: '', ka: '' } }
@@ -40,6 +42,7 @@ const EMPTY_FORM = {
   placeholder_color: '#263947',
   price: '' as string,
   images: [] as string[],
+  hero_bullets: [] as BilingualText[],
   benefits: [{ ...EMPTY_BENEFIT }] as ProductBenefit[],
   features: [{ ...EMPTY_FEATURE }] as ProductFeature[],
   faqs: [] as FaqItem[],
@@ -85,6 +88,38 @@ function BilTextarea({ label, value, onChange, rows = 3 }: { label: string; valu
           <textarea rows={rows} value={value.ka} onChange={(e) => onChange({ ...value, ka: e.target.value })} className={textareaCls} />
         </div>
       </div>
+    </div>
+  )
+}
+
+function HeroBulletsEditor({ items, onChange }: { items: BilingualText[]; onChange: (v: BilingualText[]) => void }) {
+  function add() { onChange([...items, { ...EMPTY_HERO_BULLET }]) }
+  function remove(i: number) { onChange(items.filter((_, idx) => idx !== i)) }
+  function update(i: number, updated: BilingualText) { onChange(items.map((item, idx) => idx === i ? updated : item)) }
+
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className={cardCls}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-[#DAEFFF]/50">Bullet {i + 1}</span>
+            <button type="button" onClick={() => remove(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <span className={subLabelCls}>EN</span>
+              <input value={item.en} onChange={(e) => update(i, { ...item, en: e.target.value })} className={inputCls} />
+            </div>
+            <div>
+              <span className={subLabelCls}>KA</span>
+              <input value={item.ka} onChange={(e) => update(i, { ...item, ka: e.target.value })} className={inputCls} />
+            </div>
+          </div>
+        </div>
+      ))}
+      <button type="button" onClick={add} className="text-xs text-[#E4E969] hover:text-[#FAFFC5] font-semibold">
+        + Add Bullet
+      </button>
     </div>
   )
 }
@@ -198,6 +233,14 @@ function FaqEditor({ items, onChange }: { items: FaqItem[]; onChange: (v: FaqIte
   )
 }
 
+function parseHeroBullets(raw: unknown): BilingualText[] {
+  if (!Array.isArray(raw)) return []
+  return raw.map((b) => ({
+    en: b?.en ?? '',
+    ka: b?.ka ?? '',
+  }))
+}
+
 function parseBenefits(raw: unknown): ProductBenefit[] {
   if (!Array.isArray(raw)) return [{ ...EMPTY_BENEFIT }]
   return raw.map((b) => ({
@@ -274,6 +317,7 @@ export function ProductManager() {
       placeholder_color: product.placeholder_color,
       price: product.price != null ? String(product.price) : '',
       images: product.images || [],
+      hero_bullets: parseHeroBullets(product.hero_bullets),
       benefits: parseBenefits(product.benefits),
       features: parseFeatures(product.features),
       faqs: parseFaqs(product.faqs),
@@ -362,6 +406,7 @@ export function ProductManager() {
       placeholder_color: form.placeholder_color,
       price,
       images,
+      hero_bullets: form.hero_bullets,
       benefits: form.benefits,
       features: form.features,
       faqs: form.faqs,
@@ -551,9 +596,20 @@ export function ProductManager() {
             <p className="text-xs text-[#DAEFFF]/30 mt-1">Max 1 MB</p>
           </div>
 
-          {/* Benefits */}
+          {/* Hero Bullets */}
           <div className="mb-6">
-            <label className={`${labelCls} mb-3`}>Benefits</label>
+            <label className={`${labelCls} mb-1`}>Hero Bullets</label>
+            <p className="text-xs text-[#DAEFFF]/35 mb-3">Short checkmark items shown in the product hero. Leave empty to use Key Benefits titles instead.</p>
+            <HeroBulletsEditor
+              items={form.hero_bullets}
+              onChange={(v) => setForm(f => ({ ...f, hero_bullets: v }))}
+            />
+          </div>
+
+          {/* Key Benefits */}
+          <div className="mb-6">
+            <label className={`${labelCls} mb-1`}>Key Benefits</label>
+            <p className="text-xs text-[#DAEFFF]/35 mb-3">Cards shown in the &quot;Key Benefits&quot; section below the hero. Each card has an icon, title, and description.</p>
             <BenefitsEditor
               items={form.benefits}
               onChange={(v) => setForm(f => ({ ...f, benefits: v }))}

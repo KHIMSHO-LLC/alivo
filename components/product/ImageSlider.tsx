@@ -77,6 +77,33 @@ export function ImageSlider({ images, placeholderColor, productName }: ImageSlid
           </>
         )}
       </div>
+
+      {/* Thumbnail strip */}
+      {slides > 1 && (
+        <div className="flex gap-2 justify-center flex-wrap">
+          {images.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              aria-label={`Go to image ${i + 1}`}
+              className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 transition-all duration-200 ${
+                i === active
+                  ? 'ring-2 ring-[#E4E969] ring-offset-2 ring-offset-[#0C1A23]'
+                  : 'opacity-50 hover:opacity-80'
+              }`}
+              style={{ backgroundColor: placeholderColor }}
+            >
+              <Image
+                src={src}
+                alt={`${productName} thumbnail ${i + 1}`}
+                fill
+                className="object-cover"
+                sizes="64px"
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
